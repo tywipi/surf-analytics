@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Surf Lending — LTV Monitor</title>
+<style>
+  :root{
+    --bg:#0b0f14;
+    --panel:#11171f;
+    --line:#1e2832;
+    --line-soft:#161e27;
+    --ink:#e6edf3;
+    --ink-dim:#8b9bab;
+    --ink-faint:#5a6b7b;
+    --accent:#4fd1c5;        /* surf teal */
+    --accent-dim:#2a8076;
+    /* LTV risk ramp */
+    --risk-lo:#3fb950;
+    --risk-mid:#d29922;
+    --risk-hi:#f85149;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  body{padding:clamp(16px,4vw,40px);max-width:1180px;margin:0 auto}
+
+  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 20px;margin-bottom:6px}
+  h1{font-size:clamp(20px,3vw,26px);font-weight:650;letter-spacing:-.01em;margin:0}
+  h1 .wave{color:var(--accent)}
+  .sub{color:var(--ink-dim);font-size:13px;font-family:var(--mono)}
+  .meta{margin:10px 0 22px;color:var(--ink-faint);font-family:var(--mono);font-size:12px;
+        display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+  .meta .dot{color:var(--accent-dim)}
+  .meta a{color:var(--ink-dim)}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
+  .search{flex:1 1 200px;min-width:160px}
+  input[type=search]{width:100%;background:var(--panel);border:1px solid var(--line);
+    color:var(--ink);font-family:var(--mono);font-size:13px;padding:9px 12px;border-radius:7px}
+  input[type=search]::placeholder{color:var(--ink-faint)}
+  input:focus{outline:2px solid var(--accent-dim);outline-offset:1px;border-color:transparent}
+  .hint{color:var(--ink-faint);font-size:12px;font-family:var(--mono)}
+
+  .wrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  thead th{position:sticky;top:0;background:var(--panel);text-align:right;
+    font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--ink-dim);padding:13px 14px;cursor:pointer;
+    user-select:none;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child{text-align:left}
+  thead th:hover{color:var(--ink)}
+  thead th .arrow{color:var(--accent);font-size:10px;margin-left:4px;opacity:0}
+  thead th.sorted .arrow{opacity:1}
+  thead th.ltv-col{color:var(--accent)}
+
+  tbody td{text-align:right;padding:12px 14px;font-family:var(--mono);font-size:13px;
+    border-bottom:1px solid var(--line-soft)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:#0e141b}
+  td.market{text-align:left;font-family:var(--sans);font-weight:550;color:var(--ink)}
+  td.market .pair{color:var(--ink-faint);font-family:var(--mono);font-size:11px;display:block;margin-top:2px}
+  .dim{color:var(--ink-dim)}
+  .na{color:var(--ink-faint)}
+
+  /* LTV — the signature column */
+  td.ltv{position:relative;font-weight:600}
+  .ltv-bar{position:absolute;left:0;top:0;bottom:0;opacity:.13;pointer-events:none}
+  .ltv-val{position:relative}
+  .swatch{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
+
+  footer{margin-top:18px;color:var(--ink-faint);font-family:var(--mono);font-size:11.5px;line-height:1.6}
+  .err{background:#2a1518;border:1px solid #5c2327;color:#ffb3ad;padding:14px 16px;
+    border-radius:8px;font-family:var(--mono);font-size:13px;margin-top:10px}
+  @media (max-width:640px){
+    thead th,tbody td{padding:10px 9px;font-size:12px}
+    .hide-sm{display:none}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    tbody tr{transition:none}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1><span class="wave">≋</span> Surf Lending — LTV Monitor</h1>
+    <span class="sub"><a href="positions.html" style="color:var(--accent)">position risk monitor →</a></span>
+  </header>
+  <div class="meta" id="meta"></div>
+
+  <div class="controls">
+    <span class="search"><input id="q" type="search" placeholder="filter markets / assets…" /></span>
+    <span class="hint" id="count"></span>
+  </div>
+
+  <div id="mount"></div>
+
+  <footer>
+    Data source: <span id="src" class="dim">—</span><br/>
+    Static dashboard · reads <code>data/markets.json</code> · regenerate with <code>scripts/fetch_surf.py</code>.
+    Risk shading on LTV is illustrative, not advice.
+  </footer>
+
+<script>
+const COLS = [
+  {key:"market",        label:"Market",     type:"text", cls:"market"},
+  {key:"supplied",      label:"Supplied",   type:"num",  fmt:"int", hideSm:true},
+  {key:"borrowed",      label:"Borrowed",   type:"num",  fmt:"int", hideSm:true},
+  {key:"available",     label:"Available",  type:"num",  fmt:"int", hideSm:true},
+  {key:"utilization",   label:"Util",       type:"num",  fmt:"pct"},
+  {key:"supply_apy",    label:"Supply APY", type:"num",  fmt:"pct"},
+  {key:"borrow_apr",    label:"Borrow APR", type:"num",  fmt:"pct"},
+  {key:"max_ltv",       label:"Max LTV",    type:"num",  fmt:"pct", ltv:true},
+  {key:"recommended_ltv",label:"Rec. LTV",  type:"num",  fmt:"pct", hideSm:true},
+  {key:"liq_threshold", label:"Liq. LTV",   type:"num",  fmt:"pct", hideSm:true},
+];
+
+// derive a display label per row from loan + collateral
+function marketLabel(r){
+  if(r.loan_asset && r.collateral_asset) return `${r.loan_asset}`;
+  return r.loan_asset || r.pool_id || "—";
+}
+
+let state = {rows:[], sortKey:"max_ltv", dir:-1, q:""};
+
+const fmtInt = v => v==null ? null : Math.round(v).toLocaleString("en-US");
+const fmtPct = v => v==null ? null : (v*100).toFixed(1)+"%";
+function fmtCell(col,v){
+  if(v==null||v==="") return `<span class="na">—</span>`;
+  if(col.type==="text") return String(v);
+  if(col.fmt==="int") return fmtInt(v);
+  if(col.fmt==="pct") return fmtPct(v);
+  return v;
+}
+// LTV risk color: green <0.5, amber ~0.7, red >=0.8
+function ltvColor(v){
+  if(v==null) return "var(--ink-faint)";
+  if(v<0.5)  return "var(--risk-lo)";
+  if(v<0.7)  return "var(--risk-mid)";
+  return "var(--risk-hi)";
+}
+
+function render(){
+  const mount = document.getElementById("mount");
+  let rows = state.rows.slice();
+  if(state.q){
+    const q = state.q.toLowerCase();
+    rows = rows.filter(r =>
+      [r.loan_asset,r.collateral_asset,r.pool_id]
+        .filter(Boolean).join(" ").toLowerCase().includes(q));
+  }
+  rows.sort((a,b)=>{
+    const k=state.sortKey;
+    let av = k==="market" ? marketLabel(a) : a[k];
+    let bv = k==="market" ? marketLabel(b) : b[k];
+    if(av==null&&bv==null) return 0;
+    if(av==null) return 1;            // nulls always sink
+    if(bv==null) return -1;
+    if(typeof av==="string") return state.dir*av.localeCompare(bv);
+    return state.dir*(av-bv);
+  });
+
+  document.getElementById("count").textContent =
+    `${rows.length} market${rows.length===1?"":"s"}`;
+
+  const head = COLS.map(c=>{
+    const sorted = c.key===state.sortKey;
+    const arrow = sorted ? (state.dir<0?"▼":"▲") : "";
+    return `<th data-key="${c.key}" class="${sorted?"sorted":""} ${c.ltv?"ltv-col":""} ${c.hideSm?"hide-sm":""}">${c.label}<span class="arrow">${arrow}</span></th>`;
+  }).join("");
+
+  const body = rows.map(r=>{
+    const tds = COLS.map(c=>{
+      let v=r[c.key];
+      if(c.key==="market") v = marketLabel(r);
+      if(c.ltv){
+        const col=ltvColor(v);
+        const pct=v==null?0:Math.min(v,1)*100;
+        return `<td class="ltv ${c.hideSm?"hide-sm":""}">
+          <span class="ltv-bar" style="width:${pct}%;background:${col}"></span>
+          <span class="ltv-val"><span class="swatch" style="background:${col}"></span>${fmtCell(c,v)}</span></td>`;
+      }
+      if(c.cls==="market"){
+        const pair = r.collateral_asset
+          ? `<span class="pair">borrow ${r.loan_asset} · vs ${r.collateral_asset}</span>`
+          : `<span class="pair">${r.pool_id||""}</span>`;
+        return `<td class="market">${fmtCell(c,v)}${pair}</td>`;
+      }
+      return `<td class="${c.hideSm?"hide-sm":""} dim">${fmtCell(c,v)}</td>`;
+    }).join("");
+    return `<tr>${tds}</tr>`;
+  }).join("");
+
+  mount.innerHTML = `<div class="wrap"><table>
+    <thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+
+  mount.querySelectorAll("th").forEach(th=>{
+    th.onclick=()=>{
+      const k=th.dataset.key;
+      if(state.sortKey===k){ state.dir*=-1; }
+      else { state.sortKey=k; state.dir = (k==="market"?1:-1); } // text asc, numbers desc
+      render();
+    };
+  });
+}
+
+async function boot(){
+  try{
+    const res = await fetch("data/markets.json",{cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const snap = await res.json();
+    state.rows = snap.markets||[];
+    document.getElementById("src").textContent = snap.source||"unknown";
+    const when = snap.fetched_at ? new Date(snap.fetched_at).toLocaleString() : "unknown";
+    document.getElementById("meta").innerHTML =
+      `<span>updated ${when}</span><span class="dot">•</span>`+
+      `<span>${snap.count??state.rows.length} pairs · ${snap.pool_count??"?"} pools</span><span class="dot">•</span>`+
+      `<span>sorted by ${state.sortKey.replace(/_/g," ").toUpperCase()}</span>`;
+    render();
+  }catch(e){
+    document.getElementById("mount").innerHTML =
+      `<div class="err">Couldn't load <code>data/markets.json</code> — ${e.message}.<br/>`+
+      `Run <code>python scripts/fetch_surf.py</code> first, and serve over http (not file://).</div>`;
+  }
+}
+document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value;render();});
+boot();
+</script>
+</body>
+</html>
