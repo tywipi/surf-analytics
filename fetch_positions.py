@@ -174,13 +174,16 @@ def compute_risk(pos: dict, pool_meta, collateral_ref, asset_decimals):
         collateral_qty * c_price if (collateral_qty is not None and c_price is not None) else None
     )
 
-    ltv_api = pos.get("ltv")
+    # Surf's API reports ltv scaled by 1e6; normalize to a 0..1 fraction.
+    _ltv_raw = pos.get("ltv")
+    ltv_api = (_ltv_raw / 1_000_000) if _ltv_raw is not None else None
+
     ltv_computed = None
     if collateral_value not in (None, 0) and debt_value is not None:
         ltv_computed = debt_value / collateral_value
 
-    # Use API ltv as authoritative; fall back to computed.
-    ltv = ltv_api if ltv_api is not None else ltv_computed
+    # Both agree to ~1e-8 in practice; prefer computed (price-based), fall back to API.
+    ltv = ltv_computed if ltv_computed is not None else ltv_api
 
     health_factor = None
     dist_to_liq = None
