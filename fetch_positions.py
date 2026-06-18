@@ -46,6 +46,23 @@ RETRY_BACKOFF = 2.0
 
 ADA_POLICY = ""  # empty policyId denotes ADA (lovelace)
 
+# ADA/USD rate source (free, no key).
+ADAUSD_URL = "https://api.coingecko.com/api/v3/simple/price?ids=cardano&vs_currencies=usd"
+
+
+def fetch_ada_usd():
+    """Best-effort ADA/USD rate. Returns (rate, source) or (None, reason)."""
+    try:
+        req = Request(ADAUSD_URL, headers=HEADERS)
+        with urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        rate = data.get("cardano", {}).get("usd")
+        if isinstance(rate, (int, float)) and rate > 0:
+            return float(rate), "coingecko"
+        return None, "unexpected_response"
+    except Exception as e:  # noqa: BLE001
+        return None, f"error:{type(e).__name__}"
+
 
 # ---------------------------------------------------------------------------
 def http_get_json(url: str):
@@ -165,24 +182,36 @@ def compute_risk(pos: dict, pool_meta, collateral_ref, asset_decimals):
     c_price = cref.get("price", None)
     liq_threshold = cref.get("liq_threshold")
 
-    debt_qty = scaled(pos.get("principal"), pa_dec)               # in pool-asset units
+    debt_qty = scaled(pos.get("principal"), pa_dec)               # in loan-asset (pool) units
     collateral_qty = scaled(pos.get("collateral"), c_dec)        # in collateral units
 
-    # Values expressed in the pool asset's price terms (usually USD-ish or ADA).
-    debt_value = (debt_qty * pa_price) if (debt_qty is not None and pa_price is not None) else debt_qty
-    collateral_value = (
+    # IMPORTANT: the collateral `price` from getAllPoolInfos is already denominated in the
+    # POOL (loan) asset, not USD. So LTV = debt(loan units) / (collateral_qty * collateral_price),
+    # with debt left in loan-asset units. Applying the pool's own price would double-count and
+    # breaks stablecoin pools (verified against live USDM/NIGHT + ADA/SNEK positions).
+    debt_value = debt_qty                                         # loan-asset units
+    collateral_value = (                                         # loan-asset units
         collateral_qty * c_price if (collateral_qty is not None and c_price is not None) else None
     )
 
-    # Surf's API reports ltv scaled by 1e6; normalize to a 0..1 fraction.
+    # The API's `ltv` scaling is INCONSISTENT across pools — some report ltv*1e6,
+    # some report the bare fraction. So we do NOT trust it for display/math. Instead we
+    # compute LTV from amounts and the collateral price (denominated in the loan asset),
+    # which is reliable. The API value is kept only as a loose cross-check, normalized
+    # by detecting whether it looks scaled.
     _ltv_raw = pos.get("ltv")
-    ltv_api = (_ltv_raw / 1_000_000) if _ltv_raw is not None else None
+    if _ltv_raw is None:
+        ltv_api = None
+    elif _ltv_raw > 100:            # clearly scaled (e.g. 467606 -> 0.4676)
+        ltv_api = _ltv_raw / 1_000_000
+    else:                           # already a fraction
+        ltv_api = _ltv_raw
 
     ltv_computed = None
     if collateral_value not in (None, 0) and debt_value is not None:
         ltv_computed = debt_value / collateral_value
 
-    # Both agree to ~1e-8 in practice; prefer computed (price-based), fall back to API.
+    # Price-based computed LTV is authoritative; fall back to API only if we can't compute.
     ltv = ltv_computed if ltv_computed is not None else ltv_api
 
     health_factor = None
@@ -203,6 +232,7 @@ def compute_risk(pos: dict, pool_meta, collateral_ref, asset_decimals):
         "pool_id": pool_id,
         "address": pos.get("address"),
         "loan_asset": pm.get("ticker"),
+        "loan_price": pa_price,        # ADA per loan-asset token (e.g. USDM=5.78, ADA=1.0)
         "collateral_asset": cref.get("ticker") or hex_to_ascii(
             (pos.get("collateralAsset") or {}).get("assetName", "")
         ),
@@ -257,16 +287,23 @@ def main() -> int:
     raw_positions = flatten_positions(pos_payload)
     rows = [compute_risk(p, pool_meta, collateral_ref, asset_decimals) for p in raw_positions]
 
-    # Sanity check: how well does computed LTV match the API's ltv?
-    diffs = [
-        abs(r["ltv_computed"] - r["ltv_api"])
-        for r in rows
-        if r["ltv_computed"] is not None and r["ltv_api"] is not None
-    ]
+    # Data-quality summary. Computed LTV is authoritative; we report coverage and
+    # any positions that couldn't be priced or look out of range, plus how many
+    # agree with the (inconsistently-scaled) API value as a loose secondary signal.
+    priced = [r for r in rows if r["ltv"] is not None]
+    unpriced = [r for r in rows if r["ltv"] is None]
+    out_of_range = [r for r in rows if r["ltv"] is not None and r["ltv"] > 2.0]
+    agree = 0
+    for r in rows:
+        if r["ltv_computed"] is not None and r["ltv_api"] is not None:
+            if abs(r["ltv_computed"] - r["ltv_api"]) < 0.01:
+                agree += 1
     ltv_check = {
-        "compared": len(diffs),
-        "max_abs_diff": max(diffs) if diffs else None,
-        "mean_abs_diff": (sum(diffs) / len(diffs)) if diffs else None,
+        "total": len(rows),
+        "priced": len(priced),
+        "unpriced": len(unpriced),
+        "out_of_range_gt2": len(out_of_range),
+        "agree_with_api": agree,
     }
 
     # Asset reference for the front-end stress test (per-asset current prices).
@@ -274,11 +311,15 @@ def main() -> int:
         k: {"price": v, "decimals": asset_decimals.get(k)} for k, v in asset_price.items()
     }
 
+    ada_usd, rate_src = fetch_ada_usd()
+
     snapshot = {
         "source": {"positions": pos_url, "pools": pool_url},
         "fetched_at": datetime.now(timezone.utc).isoformat(),
         "position_count": len(rows),
         "ltv_check": ltv_check,
+        "ada_usd": ada_usd,            # ADA price in USD; null if unavailable
+        "ada_usd_source": rate_src,
         "assets": asset_table,
         "positions": rows,
     }
@@ -286,9 +327,11 @@ def main() -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(snapshot, indent=2 if args.pretty else None))
+    rate_msg = f"ADA/USD={ada_usd}" if ada_usd else f"ADA/USD unavailable ({rate_src})"
     print(
         f"Wrote {len(rows)} positions to {out}. "
-        f"LTV check: max|Δ|={ltv_check['max_abs_diff']}, n={ltv_check['compared']}",
+        f"priced={ltv_check['priced']}, unpriced={ltv_check['unpriced']}, "
+        f"out-of-range(>2.0)={ltv_check['out_of_range_gt2']}. {rate_msg}",
         file=sys.stderr,
     )
     return 0

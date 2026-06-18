@@ -18,6 +18,14 @@ The second module: finds positions that are **underwater or at risk of liquidati
 
 Health factor = liquidation LTV ÷ current LTV (≤1 = liquidatable). Since Surf loans are overcollateralized and non-recourse, "at risk of default" means current LTV approaching the liquidation threshold — driven mostly by collateral price moving, which is exactly what the stress test probes.
 
+## ADA / USD unit toggle
+
+Both dashboards have a unit toggle (defaults to **ADA**). Surf prices everything in ADA internally, so USD is just ADA × the ADA/USD rate. Each fetcher pulls that rate once per run from CoinGecko's free `simple/price` endpoint and bakes it into the JSON (`ada_usd`), so the toggle needs no live browser call and works offline. If the rate fetch fails, the field is `null`, the USD button greys out, and the dashboards stay in ADA — nothing breaks.
+
+The toggle rescales **money columns only** (supplied/borrowed/available, debt, liquidation price, stress-test totals). LTV, health factor, utilization, and APY are ratios and never change with the unit. The position monitor also has a manual rate-override box for hypotheticals.
+
+Money conversion: market values are in loan-token units → ADA via each row's `loan_price` → USD via `ada_usd`. Position debt is `debt_qty × loan_price` (ADA) → USD.
+
 ## Why one row per pool → collateral pair
 
 In Surf, a *pool* is a single borrowable asset (e.g. supply/borrow iUSD) that accepts **several collaterals**, and each collateral carries its own `maxBorrowLTV`, `recommendedBorrowLTV`, and `liquidationThresholdLTV`. LTV is therefore a property of the **(loan asset, collateral asset) pair**, not the pool. The fetcher emits one row per pair so "sort by LTV" is meaningful and matches how lending dashboards present markets. Pool-level aggregates (supplied, borrowed, utilization, APYs) are carried on every row of that pool.
