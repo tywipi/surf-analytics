@@ -132,12 +132,19 @@ def normalize_pool_info(pool_id: str, info: dict) -> list:
     volume = _scaled(info.get("totalVolume"), pool_dec)
     available = (supplied - borrowed) if (supplied is not None and borrowed is not None) else None
 
-    util = info.get("u")
-    if util is None and supplied not in (None, 0) and borrowed is not None:
+    # Utilization: the API reports `u` as an integer = percent × 100
+    # (e.g. 7484 → 74.84% → 0.7484; 9999 → ~100%). So divide by 10,000.
+    # Fall back to borrowed/supplied (already a fraction) if `u` is absent.
+    raw_u = info.get("u")
+    if raw_u is not None:
+        try:
+            util = float(raw_u) / 10000.0
+        except (TypeError, ValueError):
+            util = None
+    elif supplied not in (None, 0) and borrowed is not None:
         util = borrowed / supplied
-    # The API reports utilization as a percent (e.g. 74.84 = 74.84%). Normalize to a
-    # 0..1 fraction and clamp — utilization can't exceed 100%.
-    util = _as_decimal(util)
+    else:
+        util = None
     if util is not None:
         util = max(0.0, min(1.0, util))
 
