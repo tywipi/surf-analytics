@@ -29,6 +29,18 @@
   .card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:16px}
 
   /* stress controls */
+  .hero{background:linear-gradient(180deg,#0e1620,#11171f)}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:14px}
+  @media (max-width:760px){.hero-grid{grid-template-columns:1fr}}
+  .hero-row{display:flex;align-items:center;justify-content:space-between}
+  .sortmini{font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+  .sortbtn{background:transparent;border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);font-size:10px;border-radius:5px;padding:2px 7px;cursor:pointer;margin-left:3px}
+  .sortbtn.on{background:var(--accent-dim);color:#04110f;border-color:transparent}
+  #assetSelect{width:100%;margin-top:6px;background:var(--bg);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer}
+  #assetSelect:focus{outline:2px solid var(--accent-dim);border-color:transparent}
+  .hero-price{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:6px}
+  .curve-title{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin-bottom:4px}
+  .curve-cap{font-family:var(--mono);font-size:10px;color:var(--ink-faint);margin-top:2px;text-align:center}
   .stress{display:grid;gap:16px;grid-template-columns:1fr;margin-top:18px}
   .stress .global{display:flex;flex-direction:column;gap:8px}
   .stress label{font-family:var(--mono);font-size:12px;color:var(--ink-dim)}
@@ -136,15 +148,14 @@ function money(ada){ const v=toUnit(ada); if(v==null) return null;
 function priceUnit(ada){ const v=toUnit(ada); if(v==null) return null;
   return sym()+(v<0.01?v.toFixed(6):v.toFixed(4)); }
 
-// shock state: global fraction (0..0.6) + per-asset overrides (key -> fraction)
-let shock={ global:0, perAsset:{} };
-let showAllAssets=false;
+// Stress test: one focused collateral asset shocked by `focusDrop` (0..0.6).
+// focusKey = which collateral asset is selected; null until data loads.
+let focusKey=null, focusDrop=0, assetSort="debt";
 
-// effective price multiplier for a position's collateral
-function mult(key){
-  const a = (key in shock.perAsset) ? shock.perAsset[key] : shock.global;
-  return 1 - a;
-}
+// Effective price multiplier for a position's collateral: only the focused asset
+// is shocked; everything else stays at current price.
+function mult(key){ return key===focusKey ? (1-focusDrop) : 1; }
+
 // recompute a position under current shock. debt_ada is the ADA-denominated debt.
 function stressed(p){
   const m = mult(p.collateral_key);
@@ -175,6 +186,45 @@ function totalAtRisk(rows){
   return {n,debt};
 }
 
+// How many positions / how much debt (ADA) backed by `key` would be liquidatable
+// if that asset's price fell by `drop` (0..1). Independent of current focus state.
+function debtLiquidatableFor(rows, key, drop){
+  const m = 1-drop;
+  let n=0, debt=0;
+  rows.forEach(p=>{
+    if(p.collateral_key!==key) return;
+    if(p.ltv==null || !p.liq_threshold || m<=0) return;
+    const ltv = p.ltv/m;
+    if(ltv >= p.liq_threshold){ n++; debt += p.debt_ada||0; }
+  });
+  return {n,debt};
+}
+
+// Mini liquidation curve: debt liquidatable vs price drop (0..60%), marker at current.
+function drawCurve(rows, key, drop){
+  const el=document.getElementById("curve");
+  if(!el) return;
+  const W=300,H=150,m={l:8,r:8,t:10,b:22};
+  const steps=[]; for(let d=0; d<=0.60001; d+=0.02) steps.push(d);
+  const vals=steps.map(d=>debtLiquidatableFor(rows,key,d).debt);
+  const maxV=Math.max(1,...vals);
+  const x=d=>m.l+(d/0.60)*(W-m.l-m.r);
+  const y=v=>(H-m.b)-(v/maxV)*(H-m.b-m.t);
+  // area path
+  let path=`M ${x(0)} ${y(vals[0])}`;
+  steps.forEach((d,i)=>{ path+=` L ${x(d)} ${y(vals[i])}`; });
+  const area=path+` L ${x(0.60)} ${H-m.b} L ${x(0)} ${H-m.b} Z`;
+  const cur=debtLiquidatableFor(rows,key,drop).debt;
+  const mx=x(drop), my=y(cur);
+  const ticks=[0,0.2,0.4,0.6].map(d=>`<text x="${x(d)}" y="${H-6}" fill="var(--ink-faint)" font-size="9" text-anchor="middle" font-family="monospace">−${Math.round(d*100)}%</text>`).join("");
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
+    <path d="${area}" fill="var(--risk-hi)" fill-opacity="0.12"/>
+    <path d="${path}" fill="none" stroke="var(--risk-hi)" stroke-width="1.5"/>
+    <line x1="${mx}" y1="${m.t}" x2="${mx}" y2="${H-m.b}" stroke="var(--accent)" stroke-dasharray="3 3"/>
+    <circle cx="${mx}" cy="${my}" r="3.5" fill="var(--accent)"/>
+    ${ticks}</svg>`;
+}
+
 function render(){
   // debt_ada = debt in loan tokens * loan_price (ADA per token); the single ADA base.
   const rows = DATA.positions.map(p=>{
@@ -201,47 +251,52 @@ function render(){
       <button class="reset" id="rateReset">use live</button></span>
   </div>`;
 
-  // ---- stress controls ----
+  // ---- stress test hero (single focused asset) ----
   const assets=DATA.assets||{};
-  // rank collaterals by debt-at-risk so the most significant show first
-  const assetKeys=Object.keys(assets).sort((a,b)=>(assets[b].debt_ada||0)-(assets[a].debt_ada||0));
-  const TOP_N=6;
-  const shown = showAllAssets ? assetKeys : assetKeys.slice(0, TOP_N);
-  const hiddenCount = assetKeys.length - shown.length;
-  const assetCtls=shown.map(k=>{
-    const cur=(k in shock.perAsset)?shock.perAsset[k]:null;
-    const val=cur==null?"":Math.round(cur*100);
-    const pxAda = assets[k].price;
-    const pxDisp = pxAda==null?"?":priceUnit(pxAda);
-    const label = assets[k].ticker || k;
-    const dbt = assets[k].debt_ada ? ` · ${money(assets[k].debt_ada)}` : "";
-    return `<div class="asset-ctl">
-      <div class="nm" title="${k}">${label}</div>
-      <div class="px">${pxDisp}${dbt}</div>
-      <input type="range" min="0" max="60" value="${cur==null?Math.round(shock.global*100):val}"
-        data-asset="${k}" />
-      <div class="px" data-px="${k}">−${cur==null?Math.round(shock.global*100):val}%${cur==null?" (global)":""}</div>
-    </div>`;
-  }).join("");
-  const moreBtn = (hiddenCount>0 || showAllAssets)
-    ? `<button class="reset" id="toggleAssets">${showAllAssets?"show top "+TOP_N:"show all "+assetKeys.length+" ("+hiddenCount+" more)"}</button>` : "";
+  let assetKeys=Object.keys(assets);
+  assetKeys.sort((a,b)=> assetSort==="alpha"
+    ? String(assets[a].ticker||a).localeCompare(String(assets[b].ticker||b))
+    : (assets[b].debt_ada||0)-(assets[a].debt_ada||0));
+  if(focusKey==null && assetKeys.length) focusKey=assetKeys[0];
 
-  const ar=totalAtRisk(rows);
-  const stressHtml=`<div class="card">
+  const options=assetKeys.map(k=>{
+    const t=assets[k].ticker||k;
+    const d=assets[k].debt_ada?` (${money(assets[k].debt_ada)})`:"";
+    return `<option value="${k}" ${k===focusKey?"selected":""}>${t}${d}</option>`;
+  }).join("");
+
+  const fa = focusKey?assets[focusKey]:null;
+  const faTicker = fa?(fa.ticker||focusKey):"—";
+  const faPrice = fa?fa.price:null;
+  const liqNow = focusKey ? debtLiquidatableFor(rows, focusKey, focusDrop) : {n:0,debt:0};
+
+  const stressHtml=`<div class="card hero">
     <h2 style="margin-top:0">Price-Shock Stress Test</h2>
-    <div class="stress">
-      <div class="global">
-        <label>Global collateral price drop</label>
-        <input id="gslider" type="range" min="0" max="60" value="${Math.round(shock.global*100)}" />
-        <div class="big">−<span id="gval">${Math.round(shock.global*100)}</span>%
-          <small>applied to all collateral (unless overridden)</small></div>
-        <div class="at-risk">At risk now: <b>${ar.n}</b> position${ar.n===1?"":"s"} ·
-          <b>${money(ar.debt)??sym()+"0"}</b> debt liquidatable</div>
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-row">
+          <label>Collateral asset</label>
+          <span class="sortmini">sort:
+            <button class="sortbtn ${assetSort==='debt'?'on':''}" data-sort="debt">debt</button>
+            <button class="sortbtn ${assetSort==='alpha'?'on':''}" data-sort="alpha">A–Z</button>
+          </span>
+        </div>
+        <select id="assetSelect">${options}</select>
+        <div class="hero-price">${faTicker} @ ${faPrice!=null?priceUnit(faPrice):"?"} ${fa&&fa.debt_ada?`· ${money(fa.debt_ada)} debt backed`:""}</div>
+
+        <label style="margin-top:14px">Price drop</label>
+        <input id="fslider" type="range" min="0" max="60" value="${Math.round(focusDrop*100)}" />
+        <div class="big">−<span id="fval">${Math.round(focusDrop*100)}</span>%
+          <small>applied to ${faTicker} collateral</small></div>
+
+        <div class="at-risk">If ${faTicker} drops <b id="dropEcho">${Math.round(focusDrop*100)}%</b>:
+          <b id="liqN">${liqNow.n}</b> position${liqNow.n===1?"":"s"} ·
+          <b id="liqD">${money(liqNow.debt)??sym()+"0"}</b> liquidatable</div>
       </div>
-      <div>
-        <label>Per-asset overrides <span style="color:var(--ink-faint)">— top collateral by debt</span></label>
-        <div class="assets" style="margin-top:8px">${assetCtls}</div>
-        <div class="tip">Drag an asset to shock it independently. ${moreBtn} <button class="reset" id="resetA">reset overrides</button></div>
+      <div class="hero-right">
+        <div class="curve-title">Liquidation curve — ${faTicker}</div>
+        <div id="curve"></div>
+        <div class="curve-cap">debt liquidatable as ${faTicker} price falls →</div>
       </div>
     </div>
   </div>`;
@@ -289,15 +344,31 @@ function render(){
 
   mount.innerHTML = toggleHtml + stressHtml + tableHtml + vizHtml;
   drawScatter(rows); drawCliff(rows);
+  if(focusKey) drawCurve(rows, focusKey, focusDrop);
 
-  // wire controls
-  document.getElementById("gslider").oninput=e=>{ shock.global=+e.target.value/100; render(); };
-  document.getElementById("resetA").onclick=()=>{ shock.perAsset={}; render(); };
-  const ta=document.getElementById("toggleAssets");
-  if(ta) ta.onclick=()=>{ showAllAssets=!showAllAssets; render(); };
-  mount.querySelectorAll("input[data-asset]").forEach(inp=>{
-    inp.oninput=e=>{ shock.perAsset[e.target.dataset.asset]=+e.target.value/100; render(); };
+  // --- stress hero wiring ---
+  // Dragging the slider only updates the lightweight hero (readout + curve marker),
+  // NOT the 600-row table/scatter/cliff. Those re-render once, on release ('change').
+  const fs=document.getElementById("fslider");
+  if(fs){
+    fs.oninput=e=>{
+      focusDrop=(+e.target.value)/100;
+      const pctTxt=Math.round(focusDrop*100)+"%";
+      const fv=document.getElementById("fval"); if(fv) fv.textContent=Math.round(focusDrop*100);
+      const de=document.getElementById("dropEcho"); if(de) de.textContent=pctTxt;
+      const liq=debtLiquidatableFor(rows, focusKey, focusDrop);
+      const ln=document.getElementById("liqN"); if(ln) ln.textContent=liq.n;
+      const ld=document.getElementById("liqD"); if(ld) ld.textContent=money(liq.debt)??sym()+"0";
+      drawCurve(rows, focusKey, focusDrop);   // cheap: ~30 point curve
+    };
+    fs.onchange=()=>render();   // release: full re-render (table/scatter/cliff reflect shock)
+  }
+  const sel=document.getElementById("assetSelect");
+  if(sel) sel.onchange=e=>{ focusKey=e.target.value; render(); };
+  mount.querySelectorAll(".sortbtn").forEach(b=>{
+    b.onclick=()=>{ assetSort=b.dataset.sort; render(); };
   });
+
   mount.querySelectorAll("th").forEach(th=>{
     th.onclick=()=>{ const k=th.dataset.k;
       if(k===sortKey) sortDir*=-1; else { sortKey=k; sortDir=(["address","loan_asset","collateral_asset"].includes(k))?1:1; }
