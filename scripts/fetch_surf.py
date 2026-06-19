@@ -135,7 +135,11 @@ def normalize_pool_info(pool_id: str, info: dict) -> list:
     util = info.get("u")
     if util is None and supplied not in (None, 0) and borrowed is not None:
         util = borrowed / supplied
+    # The API reports utilization as a percent (e.g. 74.84 = 74.84%). Normalize to a
+    # 0..1 fraction and clamp — utilization can't exceed 100%.
     util = _as_decimal(util)
+    if util is not None:
+        util = max(0.0, min(1.0, util))
 
     supply_apy = _as_decimal(info.get("supplyApy"))
     borrow_apr = _as_decimal(info.get("borrowApr"))
