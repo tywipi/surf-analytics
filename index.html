@@ -90,7 +90,7 @@
 <body>
   <header>
     <h1><span class="wave">≋</span> Surf Lending — LTV Monitor</h1>
-    <span class="sub"><a href="positions.html" style="color:var(--accent)">position risk monitor →</a></span>
+    <span class="sub"><a href="scorecard.html" style="color:var(--accent)">pool scorecard</a> · <a href="positions.html" style="color:var(--accent)">position risk monitor →</a></span>
   </header>
   <div class="meta" id="meta"></div>
 
@@ -229,6 +229,30 @@ function render(){
   });
 }
 
+// Build "updated 2h ago · next in ~4h" with exact times in the hover title.
+function freshness(fetchedAtISO, refreshHours){
+  if(!fetchedAtISO) return {text:"updated unknown", title:""};
+  const fetched = new Date(fetchedAtISO);
+  const now = new Date();
+  const agoMs = now - fetched;
+  const rel = (ms)=>{ const m=Math.round(ms/60000);
+    if(m<1) return "just now";
+    if(m<60) return m+"m ago";
+    const h=Math.round(m/60); if(h<24) return h+"h ago";
+    const d=Math.round(h/24); return d+"d ago"; };
+  let text = `updated ${rel(agoMs)}`;
+  let title = `Updated ${fetched.toLocaleString()}`;
+  if(refreshHours){
+    const next = new Date(fetched.getTime() + refreshHours*3600*1000);
+    const inMs = next - now;
+    const fwd = (ms)=>{ if(ms<=0) return "any moment";
+      const m=Math.round(ms/60000); if(m<60) return "~"+m+"m"; const h=Math.round(m/60); return "~"+h+"h"; };
+    text += ` · next in ${fwd(inMs)}`;
+    title += ` — next update expected by ${next.toLocaleString()} (every ${refreshHours}h; GitHub may run a few min late)`;
+  }
+  return {text, title};
+}
+
 async function boot(){
   try{
     const res = await fetch("data/markets.json",{cache:"no-store"});
@@ -241,9 +265,9 @@ async function boot(){
     const usdBtn=document.querySelector('.u-btn[data-unit=USD]');
     if(rate==null && usdBtn){ usdBtn.classList.add("disabled"); usdBtn.disabled=true; }
     document.getElementById("src").textContent = snap.source||"unknown";
-    const when = snap.fetched_at ? new Date(snap.fetched_at).toLocaleString() : "unknown";
+    const f = freshness(snap.fetched_at, snap.refresh_hours);
     document.getElementById("meta").innerHTML =
-      `<span>updated ${when}</span><span class="dot">•</span>`+
+      `<span title="${f.title}" style="cursor:help;border-bottom:1px dotted var(--ink-faint)">${f.text}</span><span class="dot">•</span>`+
       `<span>${snap.count??state.rows.length} pairs · ${snap.pool_count??"?"} pools</span><span class="dot">•</span>`+
       `<span>sorted by ${state.sortKey.replace(/_/g," ").toUpperCase()}</span>`;
     render();

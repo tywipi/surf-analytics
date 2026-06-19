@@ -81,7 +81,7 @@
 <body>
   <header>
     <h1><span class="wave">≋</span> Surf — Position Risk Monitor</h1>
-    <span class="nav"><a href="index.html">← market dashboard</a></span>
+    <span class="nav"><a href="index.html">← market dashboard</a> · <a href="scorecard.html">pool scorecard</a></span>
   </header>
   <div class="meta" id="meta"></div>
 
@@ -103,6 +103,24 @@ const fmt = {
 function hfColor(hf){ if(hf==null) return "var(--ink-faint)"; if(hf>=1.5) return "var(--risk-lo)"; if(hf>=1.15) return "var(--risk-mid)"; return "var(--risk-hi)"; }
 function shortAddr(a){ if(!a) return "—"; return a.length>16 ? a.slice(0,10)+"…"+a.slice(-4) : a; }
 
+// "updated 2h ago · next in ~4h" with exact times in hover title
+function freshness(fetchedAtISO, refreshHours){
+  if(!fetchedAtISO) return {text:"updated unknown", title:""};
+  const fetched=new Date(fetchedAtISO), now=new Date(), agoMs=now-fetched;
+  const rel=ms=>{ const m=Math.round(ms/60000); if(m<1) return "just now";
+    if(m<60) return m+"m ago"; const h=Math.round(m/60); if(h<24) return h+"h ago";
+    return Math.round(h/24)+"d ago"; };
+  let text=`updated ${rel(agoMs)}`, title=`Updated ${fetched.toLocaleString()}`;
+  if(refreshHours){
+    const next=new Date(fetched.getTime()+refreshHours*3600*1000), inMs=next-now;
+    const fwd=ms=>{ if(ms<=0) return "any moment"; const m=Math.round(ms/60000);
+      if(m<60) return "~"+m+"m"; return "~"+Math.round(m/60)+"h"; };
+    text+=` · next in ${fwd(inMs)}`;
+    title+=` — next update expected by ${next.toLocaleString()} (every ${refreshHours}h; GitHub may run a few min late)`;
+  }
+  return {text, title};
+}
+
 let DATA=null;
 // unit state: "ADA" or "USD"; rate is ADA/USD (USD per 1 ADA)
 let unit="ADA", rate=null, rateOverride=null;
@@ -120,6 +138,7 @@ function priceUnit(ada){ const v=toUnit(ada); if(v==null) return null;
 
 // shock state: global fraction (0..0.6) + per-asset overrides (key -> fraction)
 let shock={ global:0, perAsset:{} };
+let showAllAssets=false;
 
 // effective price multiplier for a position's collateral
 function mult(key){
@@ -184,19 +203,28 @@ function render(){
 
   // ---- stress controls ----
   const assets=DATA.assets||{};
-  const assetCtls=Object.keys(assets).map(k=>{
+  // rank collaterals by debt-at-risk so the most significant show first
+  const assetKeys=Object.keys(assets).sort((a,b)=>(assets[b].debt_ada||0)-(assets[a].debt_ada||0));
+  const TOP_N=6;
+  const shown = showAllAssets ? assetKeys : assetKeys.slice(0, TOP_N);
+  const hiddenCount = assetKeys.length - shown.length;
+  const assetCtls=shown.map(k=>{
     const cur=(k in shock.perAsset)?shock.perAsset[k]:null;
     const val=cur==null?"":Math.round(cur*100);
     const pxAda = assets[k].price;
     const pxDisp = pxAda==null?"?":priceUnit(pxAda);
+    const label = assets[k].ticker || k;
+    const dbt = assets[k].debt_ada ? ` · ${money(assets[k].debt_ada)}` : "";
     return `<div class="asset-ctl">
-      <div class="nm">${k}</div>
-      <div class="px">${pxDisp}</div>
+      <div class="nm" title="${k}">${label}</div>
+      <div class="px">${pxDisp}${dbt}</div>
       <input type="range" min="0" max="60" value="${cur==null?Math.round(shock.global*100):val}"
         data-asset="${k}" />
       <div class="px" data-px="${k}">−${cur==null?Math.round(shock.global*100):val}%${cur==null?" (global)":""}</div>
     </div>`;
   }).join("");
+  const moreBtn = (hiddenCount>0 || showAllAssets)
+    ? `<button class="reset" id="toggleAssets">${showAllAssets?"show top "+TOP_N:"show all "+assetKeys.length+" ("+hiddenCount+" more)"}</button>` : "";
 
   const ar=totalAtRisk(rows);
   const stressHtml=`<div class="card">
@@ -211,9 +239,9 @@ function render(){
           <b>${money(ar.debt)??sym()+"0"}</b> debt liquidatable</div>
       </div>
       <div>
-        <label>Per-asset overrides</label>
+        <label>Per-asset overrides <span style="color:var(--ink-faint)">— top collateral by debt</span></label>
         <div class="assets" style="margin-top:8px">${assetCtls}</div>
-        <div class="tip">Drag an asset to shock it independently. <button class="reset" id="resetA">reset overrides</button></div>
+        <div class="tip">Drag an asset to shock it independently. ${moreBtn} <button class="reset" id="resetA">reset overrides</button></div>
       </div>
     </div>
   </div>`;
@@ -265,6 +293,8 @@ function render(){
   // wire controls
   document.getElementById("gslider").oninput=e=>{ shock.global=+e.target.value/100; render(); };
   document.getElementById("resetA").onclick=()=>{ shock.perAsset={}; render(); };
+  const ta=document.getElementById("toggleAssets");
+  if(ta) ta.onclick=()=>{ showAllAssets=!showAllAssets; render(); };
   mount.querySelectorAll("input[data-asset]").forEach(inp=>{
     inp.oninput=e=>{ shock.perAsset[e.target.dataset.asset]=+e.target.value/100; render(); };
   });
@@ -345,13 +375,13 @@ async function boot(){
     if(!res.ok) throw new Error("HTTP "+res.status);
     DATA=await res.json();
     rate = (typeof DATA.ada_usd==="number" && DATA.ada_usd>0) ? DATA.ada_usd : null;
-    const when=DATA.fetched_at?new Date(DATA.fetched_at).toLocaleString():"unknown";
+    const f=freshness(DATA.fetched_at, DATA.refresh_hours);
     const chk=DATA.ltv_check||{};
     const warn=(chk.unpriced>0 || chk.out_of_range_gt2>0)
       ? `<span class="warn">⚠ ${chk.unpriced||0} unpriced · ${chk.out_of_range_gt2||0} out-of-range</span><span class="dot">•</span>` : "";
     document.getElementById("src").textContent=(DATA.source&&DATA.source.positions)||"unknown";
     document.getElementById("meta").innerHTML=
-      `<span>updated ${when}</span><span class="dot">•</span>`+
+      `<span title="${f.title}" style="cursor:help;border-bottom:1px dotted var(--ink-faint)">${f.text}</span><span class="dot">•</span>`+
       `<span>${DATA.position_count} positions</span><span class="dot">•</span>`+warn+
       `<span>${chk.priced??DATA.position_count} priced</span>`;
     render();

@@ -28,7 +28,7 @@ Both run as plain static pages (no build step, no framework, no tracking) and bo
 
 ---
 
-## The two tools
+## The three tools
 
 ### 📊 Market Dashboard &nbsp;·&nbsp; `index.html`
 
@@ -48,11 +48,21 @@ Find loans that are underwater or near liquidation — protocol-wide. Four linke
 | **Health-factor table** | Which exact positions are closest to liquidation (worst-first, liquidatable rows in red) |
 | **Position scatter** | Where the danger concentrates — buffer vs debt size, so a whale on the edge pops out |
 | **Liquidation cliff heat map** | At what price drops cascades trigger, per pool |
-| **Price-shock stress test** | "If collateral falls X%, how much debt gets liquidated?" — a global slider plus per-asset overrides, recomputing live |
+| **Price-shock stress test** | "If collateral falls X%, how much debt gets liquidated?" — a global slider plus per-asset overrides (top collateral by debt), recomputing live |
 
 > **Health factor** = liquidation LTV ÷ current LTV (≤ 1 = liquidatable). Surf loans are overcollateralized and non-recourse, so "at risk of default" really means *current LTV approaching the liquidation threshold* — driven mostly by collateral price, which is exactly what the stress test probes.
 
----
+### 🎯 Pool Scorecard &nbsp;·&nbsp; `scorecard.html`
+
+Which pools are good to **supply** to or **borrow** from. Three views:
+
+| View | What it does |
+|---|---|
+| **Scores** | Ranks pools 0–100 with a composite supply or borrow score, component bars showing what drives each |
+| **Weights** | Sliders to re-weight the score components to match how *you* judge a pool — ranking re-sorts live |
+| **Raw metrics** | The underlying numbers, sortable, with no scoring opinion baked in |
+
+> Scores are **opinionated and illustrative, not advice.** Supply favors yield earned against safe, healthy collateral (it penalizes pools where lots of debt sits near liquidation); borrow favors cheap, liquid pools with room before liquidation. The default weights are a starting point — tune them in the Weights view.
 
 ## Screenshots
 
@@ -93,6 +103,10 @@ The dashboards serve whatever `data/*.json` is committed, so the live site is as
 ### Keep it fresh automatically
 
 `.github/workflows/refresh.yml` re-runs both fetchers every 6 hours and commits the updated data — no local work. Enable it once: **Settings → Actions → General → Workflow permissions → Read and write → Save**. You can also trigger it manually from the **Actions** tab.
+
+### History accumulation
+
+Each run also appends a compact daily snapshot of per-pool metrics to `data/history/YYYY-MM-DD.json` (with a `data/history/index.json` listing available days). This quietly builds a time series so a future **trends view** (rate stability, APY/TVL over time) becomes possible — it isn't surfaced in the UI yet, it just accumulates. One small file per day keeps git diffs clean.
 
 ---
 

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Surf — Pool Scorecard</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#11171f; --line:#1e2832; --line-soft:#161e27;
+    --ink:#e6edf3; --ink-dim:#8b9bab; --ink-faint:#5a6b7b;
+    --accent:#4fd1c5; --accent-dim:#2a8076;
+    --good:#3fb950; --mid:#d29922; --bad:#f85149;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  body{padding:clamp(16px,4vw,40px);max-width:1240px;margin:0 auto}
+  a{color:var(--accent)}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px}
+  h1{font-size:clamp(20px,3vw,26px);font-weight:650;letter-spacing:-.01em;margin:0}
+  h1 .wave{color:var(--accent)}
+  .nav{font-family:var(--mono);font-size:12px;color:var(--ink-dim)}
+  .meta{margin:10px 0 18px;color:var(--ink-faint);font-family:var(--mono);font-size:12px;
+        display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+  .meta .dot{color:var(--accent-dim)}
+  h2{font-size:13px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);margin:24px 0 12px;font-weight:600}
+  .card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:16px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{background:transparent;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:12px;padding:8px 13px;cursor:pointer}
+  .seg button.on{background:var(--accent-dim);color:#04110f;font-weight:650}
+  .seg button:not(.on):hover{color:var(--ink)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+  .pool{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:15px 16px}
+  .pool.top{border:2px solid var(--accent-dim)}
+  .pool .hd{display:flex;align-items:baseline;justify-content:space-between}
+  .pool .nm{font-size:17px;font-weight:600}
+  .pool .badge{font-size:10px;background:var(--accent-dim);color:#04110f;padding:2px 7px;border-radius:6px;margin-left:8px;font-family:var(--mono)}
+  .pool .score{font-size:26px;font-weight:700;font-family:var(--mono)}
+  .pool .sub{font-size:12px;color:var(--ink-dim);font-family:var(--mono);margin-top:2px}
+  .pool .comps{margin-top:11px;padding-top:11px;border-top:1px solid var(--line-soft)}
+  .comp{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .comp .cl{font-size:11px;color:var(--ink-dim);width:104px;flex:none;font-family:var(--mono)}
+  .comp .track{flex:1;height:6px;background:var(--bg);border-radius:4px;overflow:hidden}
+  .comp .fill{display:block;height:100%}
+  .comp .cv{font-size:11px;color:var(--ink-faint);width:26px;text-align:right;font-family:var(--mono)}
+
+  .weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .wctl label{font-family:var(--mono);font-size:12px;color:var(--ink-dim);display:flex;justify-content:space-between}
+  .wctl input{width:100%;accent-color:var(--accent)}
+  .wsum{font-family:var(--mono);font-size:11px;margin-top:8px}
+  button.reset{background:transparent;border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);font-size:11px;border-radius:7px;padding:6px 10px;cursor:pointer}
+  button.reset:hover{color:var(--ink);border-color:var(--accent-dim)}
+
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  .wrap{border:1px solid var(--line);border-radius:10px;overflow:auto;background:var(--panel)}
+  thead th{position:sticky;top:0;background:var(--panel);text-align:right;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-dim);padding:12px 13px;cursor:pointer;user-select:none;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child{text-align:left}
+  thead th:hover{color:var(--ink)} thead th.sorted{color:var(--accent)}
+  tbody td{text-align:right;padding:11px 13px;font-family:var(--mono);font-size:12.5px;border-bottom:1px solid var(--line-soft)}
+  tbody tr:last-child td{border-bottom:none} tbody tr:hover td{background:#0e141b}
+  td.pl{text-align:left;font-weight:550}
+  .dim{color:var(--ink-dim)} .na{color:var(--ink-faint)}
+  footer{margin-top:22px;color:var(--ink-faint);font-family:var(--mono);font-size:11.5px;line-height:1.6}
+  .err{background:#2a1518;border:1px solid #5c2327;color:#ffb3ad;padding:14px 16px;border-radius:8px;font-family:var(--mono);font-size:13px}
+</style>
+</head>
+<body>
+  <header>
+    <h1><span class="wave">≋</span> Surf — Pool Scorecard</h1>
+    <span class="nav"><a href="index.html">market dashboard</a> · <a href="positions.html">risk monitor →</a></span>
+  </header>
+  <div class="meta" id="meta"></div>
+
+  <div class="controls">
+    <span class="seg" id="modeSeg">
+      <button data-mode="supply" class="on">Supply (lend)</button>
+      <button data-mode="borrow">Borrow</button>
+    </span>
+    <span class="seg" id="viewSeg">
+      <button data-view="scores" class="on">Scores</button>
+      <button data-view="weights">Weights</button>
+      <button data-view="raw">Raw metrics</button>
+    </span>
+  </div>
+
+  <div id="mount"></div>
+
+  <footer>
+    Data: <span id="src" class="dim">—</span><br/>
+    Scores are 0–100, opinionated and illustrative — <strong>not financial advice</strong>. Component bars show what drives each score; adjust the weights to match how you think. Supply favors yield earned against safe, healthy collateral; borrow favors cheap, liquid pools with room before liquidation.
+  </footer>
+
+<script>
+let MK=null, RISK=null, unit="ADA", rate=null;
+let mode="supply", view="scores";
+let sortKey="score", sortDir=-1;
+
+// default weights (must sum to 1 within each mode)
+const DEFAULT_W = {
+  supply: {yield:0.35, safety:0.30, util:0.20, headroom:0.15},
+  borrow: {cost:0.40, liquidity:0.25, margin:0.20, power:0.15},
+};
+let W = JSON.parse(JSON.stringify(DEFAULT_W));
+
+const clamp=x=>Math.max(0,Math.min(1,x));
+const pct=v=>v==null?"—":(v*100).toFixed(1)+"%";
+const sym=()=>unit==="USD"?"$":"₳";
+const money=ada=>{ if(ada==null) return "—"; let v=unit==="USD"&&rate?ada*rate:ada;
+  const s=Math.abs(v)>=1000?(v/1000).toFixed(0)+"k":v.toFixed(0); return sym()+s; };
+function sc(s){ return s>=70?"var(--good)":s>=45?"var(--mid)":"var(--bad)"; }
+
+// Aggregate markets.json (pair rows) to one entry per pool, with the best (highest
+// max_ltv) collateral's LTV spread as a representative headroom signal.
+function poolsFromMarkets(){
+  const by={};
+  MK.markets.forEach(r=>{
+    const id=r.pool_id;
+    if(!by[id]){
+      by[id]={pool_id:id, loan:r.loan_asset, loan_price:r.loan_price,
+        supplied:r.supplied, borrowed:r.borrowed, available:r.available,
+        util:r.utilization, supplyApy:r.supply_apy, borrowApr:r.borrow_apr,
+        maxLtv:r.max_ltv, liqLtv:r.liq_threshold, ncoll:0};
+    }
+    by[id].ncoll++;
+    // track widest headroom across this pool's collaterals
+    if(r.max_ltv!=null && r.liq_threshold!=null){
+      const hr=r.liq_threshold-r.max_ltv;
+      if(by[id]._hr==null || hr>by[id]._hr){ by[id]._hr=hr; by[id].maxLtv=r.max_ltv; by[id].liqLtv=r.liq_threshold; }
+    }
+    const pr=(RISK&&RISK[id])||null;
+    by[id].debtNearLiq = pr?pr.debt_near_liq_frac:0;
+    by[id].debtAda = pr?pr.debt_ada:null;
+  });
+  return Object.values(by);
+}
+
+function supplyComps(p){
+  return [
+    {key:"yield",   label:"Yield",            v:clamp((p.supplyApy||0)/0.12)},
+    {key:"safety",  label:"Collateral safety",v:clamp(1-(p.debtNearLiq||0)/0.30)},
+    {key:"util",    label:"Utilization",      v:clamp(1-Math.abs((p.util||0)-0.70)/0.45)},
+    {key:"headroom",label:"LTV headroom",     v:clamp(((p.liqLtv||0)-(p.maxLtv||0))/0.20)},
+  ];
+}
+function borrowComps(p){
+  const availAda=(p.available||0)*(p.loan_price||1);
+  return [
+    {key:"cost",     label:"Low cost",     v:clamp(1-(p.borrowApr||0)/0.18)},
+    {key:"liquidity",label:"Liquidity",    v:clamp(availAda/600000)},
+    {key:"margin",   label:"Safety margin",v:clamp(((p.liqLtv||0)-(p.maxLtv||0))/0.20)},
+    {key:"power",    label:"Borrow power", v:clamp((p.maxLtv||0)/0.75)},
+  ];
+}
+function scoreFor(p){
+  const comps = mode==="supply"?supplyComps(p):borrowComps(p);
+  const w=W[mode];
+  const score=Math.round(comps.reduce((s,c)=>s+c.v*(w[c.key]||0),0)*100);
+  return {comps,score};
+}
+
+function render(){
+  const mount=document.getElementById("mount");
+  let pools=poolsFromMarkets().map(p=>({...p, ...scoreFor(p)}));
+
+  if(view==="weights"){ mount.innerHTML=weightsHtml(); wireWeights(); return; }
+  if(view==="raw"){ mount.innerHTML=rawHtml(pools); wireSort(); return; }
+
+  // scores view (cards)
+  pools.sort((a,b)=>b.score-a.score);
+  mount.innerHTML = `<div class="grid">`+pools.map((p,i)=>{
+    const headline = mode==="supply"
+      ? `${pct(p.supplyApy)} APY · ${pct(p.util)} util`
+      : `${pct(p.borrowApr)} APR · ${money((p.available||0)*(p.loan_price||1))} free`;
+    const bars=p.comps.map(c=>`<div class="comp">
+      <span class="cl">${c.label}</span>
+      <span class="track"><span class="fill" style="width:${Math.round(c.v*100)}%;background:${sc(p.score)}"></span></span>
+      <span class="cv">${Math.round(c.v*100)}</span></div>`).join("");
+    return `<div class="pool ${i===0?'top':''}">
+      <div class="hd"><div><span class="nm">${p.loan}</span>${i===0?'<span class="badge">top pick</span>':''}</div>
+        <div class="score" style="color:${sc(p.score)}">${p.score}</div></div>
+      <div class="sub">${headline}</div>
+      <div class="comps">${bars}</div></div>`;
+  }).join("")+`</div>`;
+}
+
+function weightsHtml(){
+  const w=W[mode];
+  const labels = mode==="supply"
+    ? {yield:"Yield",safety:"Collateral safety",util:"Utilization",headroom:"LTV headroom"}
+    : {cost:"Low cost",liquidity:"Liquidity",margin:"Safety margin",power:"Borrow power"};
+  const sum=Object.values(w).reduce((a,b)=>a+b,0);
+  const ctls=Object.keys(w).map(k=>`<div class="wctl">
+    <label>${labels[k]} <span>${Math.round(w[k]*100)}%</span></label>
+    <input type="range" min="0" max="100" value="${Math.round(w[k]*100)}" data-w="${k}" />
+  </div>`).join("");
+  return `<div class="card">
+    <h2 style="margin-top:0">Adjust ${mode} weights</h2>
+    <div class="weights">${ctls}</div>
+    <div class="wsum" style="color:${Math.abs(sum-1)<0.001?'var(--ink-faint)':'var(--mid)'}">
+      weights total ${Math.round(sum*100)}% — scores normalize automatically.
+      <button class="reset" id="resetW">reset to defaults</button></div>
+    <div style="margin-top:14px;color:var(--ink-faint);font-family:var(--mono);font-size:11px">
+      Switch back to “Scores” to see the ranking with these weights.</div>
+  </div>`;
+}
+
+const RAWCOLS=[
+  {k:"loan",l:"Pool",t:"txt"},
+  {k:"supplyApy",l:"Supply APY",f:"pct"},
+  {k:"borrowApr",l:"Borrow APR",f:"pct"},
+  {k:"util",l:"Util",f:"pct"},
+  {k:"available",l:"Available",f:"money_loan"},
+  {k:"maxLtv",l:"Max LTV",f:"pct"},
+  {k:"liqLtv",l:"Liq LTV",f:"pct"},
+  {k:"debtNearLiq",l:"Debt near liq",f:"pct"},
+  {k:"score",l:"Score",f:"score"},
+];
+function rawHtml(pools){
+  pools.sort((a,b)=>{
+    let av=a[sortKey], bv=b[sortKey];
+    if(sortKey==="loan") return sortDir*String(av).localeCompare(String(bv));
+    if(av==null) return 1; if(bv==null) return -1; return sortDir*(av-bv);
+  });
+  const head=RAWCOLS.map(c=>`<th data-k="${c.k}" class="${c.k===sortKey?'sorted':''}">${c.l}${c.k===sortKey?(sortDir<0?' ▼':' ▲'):''}</th>`).join("");
+  const body=pools.map(p=>`<tr>`+RAWCOLS.map(c=>{
+    let v=p[c.k];
+    if(c.t==="txt") return `<td class="pl">${v}</td>`;
+    if(c.f==="pct") return `<td class="dim">${pct(v)}</td>`;
+    if(c.f==="money_loan") return `<td class="dim">${money((v||0)*(p.loan_price||1))}</td>`;
+    if(c.f==="score") return `<td style="color:${sc(v)};font-weight:650">${v}</td>`;
+    return `<td class="dim">${v}</td>`;
+  }).join("")+`</tr>`).join("");
+  return `<div class="wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function wireWeights(){
+  document.querySelectorAll("input[data-w]").forEach(inp=>{
+    inp.oninput=e=>{ W[mode][e.target.dataset.w]=(+e.target.value)/100; render(); };
+  });
+  const r=document.getElementById("resetW");
+  if(r) r.onclick=()=>{ W[mode]=JSON.parse(JSON.stringify(DEFAULT_W[mode])); render(); };
+}
+function wireSort(){
+  document.querySelectorAll("th").forEach(th=>{
+    th.onclick=()=>{ const k=th.dataset.k;
+      if(k===sortKey) sortDir*=-1; else { sortKey=k; sortDir=(k==="loan")?1:-1; }
+      render(); };
+  });
+}
+
+function setSeg(segId, attr, val, cb){
+  document.querySelectorAll(`#${segId} button`).forEach(b=>b.classList.toggle("on", b.dataset[attr]===val));
+  cb();
+}
+document.querySelectorAll("#modeSeg button").forEach(b=>b.onclick=()=>{ mode=b.dataset.mode; sortKey="score"; sortDir=-1; setSeg("modeSeg","mode",mode,render); });
+document.querySelectorAll("#viewSeg button").forEach(b=>b.onclick=()=>{ view=b.dataset.view; setSeg("viewSeg","view",view,render); });
+
+function freshness(iso,hrs){
+  if(!iso) return "updated unknown";
+  const f=new Date(iso), now=new Date(), m=Math.round((now-f)/60000);
+  const rel=m<1?"just now":m<60?m+"m ago":m<1440?Math.round(m/60)+"h ago":Math.round(m/1440)+"d ago";
+  let t="updated "+rel;
+  if(hrs){ const nx=new Date(f.getTime()+hrs*3600000), im=nx-now; t+=" · next in "+(im<=0?"any moment":im<3600000?"~"+Math.round(im/60000)+"m":"~"+Math.round(im/3600000)+"h"); }
+  return t;
+}
+
+async function boot(){
+  try{
+    const [mkRes,posRes]=await Promise.all([
+      fetch("data/markets.json",{cache:"no-store"}),
+      fetch("data/positions.json",{cache:"no-store"}).catch(()=>null),
+    ]);
+    if(!mkRes.ok) throw new Error("markets.json HTTP "+mkRes.status);
+    MK=await mkRes.json();
+    rate=(typeof MK.ada_usd==="number"&&MK.ada_usd>0)?MK.ada_usd:null;
+    if(posRes&&posRes.ok){ const pj=await posRes.json(); RISK=pj.pool_risk||null; }
+    document.getElementById("src").textContent=MK.source||"unknown";
+    document.getElementById("meta").innerHTML=
+      `<span>${freshness(MK.fetched_at,MK.refresh_hours)}</span><span class="dot">•</span>`+
+      `<span>${MK.pool_count??"?"} pools</span><span class="dot">•</span>`+
+      `<span>${RISK?"risk-adjusted":"risk data unavailable"}</span>`;
+    render();
+  }catch(e){
+    document.getElementById("mount").innerHTML=
+      `<div class="err">Couldn't load data — ${e.message}.<br/>Run the fetchers and serve over http.</div>`;
+  }
+}
+boot();
+</script>
+</body>
+</html>

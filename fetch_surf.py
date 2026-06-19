@@ -40,6 +40,10 @@ TIMEOUT = 30
 RETRIES = 3
 RETRY_BACKOFF = 2.0
 
+# Refresh cadence the GitHub Actions workflow runs at. MUST match the cron in
+# .github/workflows/refresh.yml. The dashboards use this to show "next update ~...".
+REFRESH_HOURS = 6
+
 # ADA/USD rate source (free, no key). Returns {"cardano":{"usd": <rate>}}.
 ADAUSD_URL = "https://api.coingecko.com/api/v3/simple/price?ids=cardano&vs_currencies=usd"
 
@@ -197,6 +201,58 @@ def http_get_json(url: str):
     raise RuntimeError(f"GET {url} failed after {RETRIES} attempts: {last_err}")
 
 
+def write_history_snapshot(rows, ada_usd):
+    """Append/overwrite today's compact pool-metrics snapshot at
+    data/history/YYYY-MM-DD.json. One pool may appear as several pair-rows; we
+    collapse to one entry per pool using the pool-level aggregates (identical
+    across that pool's pairs). Re-running the same day overwrites that day's file,
+    so the latest run of the day wins."""
+    from collections import OrderedDict
+
+    by_pool = OrderedDict()
+    for r in rows:
+        pid = r.get("pool_id")
+        if pid is None or pid in by_pool:
+            continue
+        by_pool[pid] = {
+            "pool_id": pid,
+            "loan_asset": r.get("loan_asset"),
+            "supplied": r.get("supplied"),
+            "borrowed": r.get("borrowed"),
+            "available": r.get("available"),
+            "utilization": r.get("utilization"),
+            "supply_apy": r.get("supply_apy"),
+            "borrow_apr": r.get("borrow_apr"),
+            "loan_price": r.get("loan_price"),
+        }
+
+    now = datetime.now(timezone.utc)
+    snapshot = {
+        "date": now.date().isoformat(),
+        "fetched_at": now.isoformat(),
+        "ada_usd": ada_usd,
+        "pools": list(by_pool.values()),
+    }
+    hist_dir = Path("data/history")
+    hist_dir.mkdir(parents=True, exist_ok=True)
+    (hist_dir / f"{now.date().isoformat()}.json").write_text(json.dumps(snapshot))
+
+    # Maintain a lightweight index so the dashboard can discover available days
+    # without listing the directory (GitHub Pages can't list dirs).
+    index_path = hist_dir / "index.json"
+    days = []
+    if index_path.exists():
+        try:
+            days = json.loads(index_path.read_text()).get("days", [])
+        except Exception:
+            days = []
+    d = now.date().isoformat()
+    if d not in days:
+        days.append(d)
+        days.sort()
+    index_path.write_text(json.dumps({"days": days, "updated_at": now.isoformat()}))
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Fetch Surf lending pools -> JSON")
     ap.add_argument("--out", default="data/markets.json")
@@ -233,6 +289,7 @@ def main() -> int:
     snapshot = {
         "source": url,
         "fetched_at": datetime.now(timezone.utc).isoformat(),
+        "refresh_hours": REFRESH_HOURS,
         "pool_count": len(pool_infos),
         "count": len(rows),
         "ada_usd": ada_usd,            # ADA price in USD; null if the rate fetch failed
@@ -243,6 +300,16 @@ def main() -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(snapshot, indent=2 if args.pretty else None))
+
+    # --- History accumulation ---
+    # Append a compact daily snapshot of per-pool metrics so a future "trends" view
+    # (rate stability, APY/TVL over time) becomes possible. One file per UTC day keeps
+    # git diffs clean and files small. We store pool-level aggregates, not pairs/positions.
+    try:
+        write_history_snapshot(rows, ada_usd)
+    except Exception as e:  # history is best-effort; never fail the main run over it
+        print(f"(history snapshot skipped: {type(e).__name__})", file=sys.stderr)
+
     rate_msg = f"ADA/USD={ada_usd}" if ada_usd else f"ADA/USD unavailable ({rate_src})"
     print(f"Wrote {len(rows)} pair-rows from {len(pool_infos)} pools to {out}. {rate_msg}", file=sys.stderr)
     return 0

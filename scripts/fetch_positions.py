@@ -46,6 +46,10 @@ RETRY_BACKOFF = 2.0
 
 ADA_POLICY = ""  # empty policyId denotes ADA (lovelace)
 
+# Refresh cadence the GitHub Actions workflow runs at. MUST match the cron in
+# .github/workflows/refresh.yml. The dashboards use this to show "next update ~...".
+REFRESH_HOURS = 6
+
 # ADA/USD rate source (free, no key).
 ADAUSD_URL = "https://api.coingecko.com/api/v3/simple/price?ids=cardano&vs_currencies=usd"
 
@@ -110,11 +114,13 @@ def build_asset_reference(pool_infos: dict):
                                               liq_threshold, max_ltv, rec_ltv}
       asset_price[asset_key] = price   (global; used for cross-pool shocks)
       asset_decimals[asset_key] = decimals
+      asset_ticker[asset_key] = readable ticker (for UI labels)
     """
     pool_meta = {}
     collateral_ref = {}
     asset_price = {}
     asset_decimals = {}
+    asset_ticker = {}
 
     for pool_id, info in pool_infos.items():
         if not isinstance(info, dict):
@@ -127,6 +133,7 @@ def build_asset_reference(pool_infos: dict):
         if info.get("price") is not None:
             asset_price.setdefault(pa_key, info["price"])
         asset_decimals.setdefault(pa_key, pa_dec)
+        asset_ticker.setdefault(pa_key, pa_ticker)
 
         for c in info.get("collateralAssets") or []:
             ca = c.get("asset") or {}
@@ -144,8 +151,11 @@ def build_asset_reference(pool_infos: dict):
             if c.get("price") is not None:
                 asset_price.setdefault(ck, c["price"])
             asset_decimals.setdefault(ck, cdec)
+            # prefer a real ticker over a hex fallback if we see one later
+            if ck not in asset_ticker or asset_ticker[ck] == ck:
+                asset_ticker[ck] = cticker
 
-    return pool_meta, collateral_ref, asset_price, asset_decimals
+    return pool_meta, collateral_ref, asset_price, asset_decimals, asset_ticker
 
 
 def scaled(value, decimals):
@@ -283,7 +293,7 @@ def main() -> int:
         print("ERROR: getAllPoolInfos had no 'poolInfos'.", file=sys.stderr)
         return 1
 
-    pool_meta, collateral_ref, asset_price, asset_decimals = build_asset_reference(pool_infos)
+    pool_meta, collateral_ref, asset_price, asset_decimals, asset_ticker = build_asset_reference(pool_infos)
     raw_positions = flatten_positions(pos_payload)
     rows = [compute_risk(p, pool_meta, collateral_ref, asset_decimals) for p in raw_positions]
 
@@ -306,9 +316,51 @@ def main() -> int:
         "agree_with_api": agree,
     }
 
-    # Asset reference for the front-end stress test (per-asset current prices).
+    # Total debt (in ADA) backed by each collateral asset, so the UI can rank
+    # collaterals and show only the most significant ones in the override panel.
+    debt_by_collateral = {}
+    for r in rows:
+        ck = r.get("collateral_key")
+        lp = r.get("loan_price") or 1
+        dq = r.get("debt_qty")
+        if ck is None or dq is None:
+            continue
+        debt_by_collateral[ck] = debt_by_collateral.get(ck, 0.0) + dq * lp
+
+    # Per-pool aggregates the scorecard needs: total debt and the share of it
+    # sitting within 15% buffer of liquidation (a supplier-side risk signal).
+    pool_debt = {}
+    pool_debt_near = {}
+    for r in rows:
+        pid = r.get("pool_id")
+        lp = r.get("loan_price") or 1
+        dq = r.get("debt_qty")
+        if pid is None or dq is None:
+            continue
+        d_ada = dq * lp
+        pool_debt[pid] = pool_debt.get(pid, 0.0) + d_ada
+        dist = r.get("dist_to_liq")
+        if dist is not None and dist <= 0.15:
+            pool_debt_near[pid] = pool_debt_near.get(pid, 0.0) + d_ada
+    pool_risk = {
+        pid: {
+            "debt_ada": round(pool_debt.get(pid, 0.0), 2),
+            "debt_near_liq_frac": round(pool_debt_near.get(pid, 0.0) / pool_debt[pid], 4)
+            if pool_debt.get(pid) else 0.0,
+        }
+        for pid in pool_debt
+    }
+
+    # Asset reference for the front-end stress test: readable ticker, current price
+    # (in ADA), decimals, and total debt-at-risk so the UI can sort/limit sliders.
     asset_table = {
-        k: {"price": v, "decimals": asset_decimals.get(k)} for k, v in asset_price.items()
+        k: {
+            "ticker": asset_ticker.get(k, k),
+            "price": v,
+            "decimals": asset_decimals.get(k),
+            "debt_ada": round(debt_by_collateral.get(k, 0.0), 2),
+        }
+        for k, v in asset_price.items()
     }
 
     ada_usd, rate_src = fetch_ada_usd()
@@ -316,10 +368,12 @@ def main() -> int:
     snapshot = {
         "source": {"positions": pos_url, "pools": pool_url},
         "fetched_at": datetime.now(timezone.utc).isoformat(),
+        "refresh_hours": REFRESH_HOURS,
         "position_count": len(rows),
         "ltv_check": ltv_check,
         "ada_usd": ada_usd,            # ADA price in USD; null if unavailable
         "ada_usd_source": rate_src,
+        "pool_risk": pool_risk,        # per-pool debt + share near liquidation (for scorecard)
         "assets": asset_table,
         "positions": rows,
     }
