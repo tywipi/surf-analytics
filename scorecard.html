@@ -123,9 +123,11 @@ function poolsFromMarkets(){
       by[id]={pool_id:id, loan:r.loan_asset, loan_price:r.loan_price,
         supplied:r.supplied, borrowed:r.borrowed, available:r.available,
         util:r.utilization, supplyApy:r.supply_apy, borrowApr:r.borrow_apr,
-        maxLtv:r.max_ltv, liqLtv:r.liq_threshold, ncoll:0};
+        maxLtv:r.max_ltv, liqLtv:r.liq_threshold, ncoll:0, collaterals:[]};
     }
     by[id].ncoll++;
+    if(r.collateral_asset && !by[id].collaterals.includes(r.collateral_asset))
+      by[id].collaterals.push(r.collateral_asset);
     // track widest headroom across this pool's collaterals
     if(r.max_ltv!=null && r.liq_threshold!=null){
       const hr=r.liq_threshold-r.max_ltv;
@@ -135,7 +137,25 @@ function poolsFromMarkets(){
     by[id].debtNearLiq = pr?pr.debt_near_liq_frac:0;
     by[id].debtAda = pr?pr.debt_ada:null;
   });
-  return Object.values(by);
+  // Build a distinguishing label. A pool is one loan asset accepting one or more
+  // collaterals; label = "LOAN · vs COLLATERAL(S)". If two pools would still collide
+  // (same loan + same collaterals), append a short pool-id suffix to disambiguate.
+  const list=Object.values(by);
+  const seen={};
+  list.forEach(p=>{
+    const cols = p.collaterals.length
+      ? (p.collaterals.length<=2 ? p.collaterals.join(", ") : p.collaterals.slice(0,2).join(", ")+" +"+(p.collaterals.length-2))
+      : "—";
+    p.label = `${p.loan} · vs ${cols}`;
+    seen[p.label]=(seen[p.label]||0)+1;
+  });
+  list.forEach(p=>{
+    if(seen[p.label]>1){
+      const sfx = (p.pool_id||"").replace(/[^a-z0-9]/gi,"").slice(-4);
+      p.label = `${p.label} (${sfx})`;
+    }
+  });
+  return list;
 }
 
 function supplyComps(p){
@@ -180,7 +200,7 @@ function render(){
       <span class="track"><span class="fill" style="width:${Math.round(c.v*100)}%;background:${sc(p.score)}"></span></span>
       <span class="cv">${Math.round(c.v*100)}</span></div>`).join("");
     return `<div class="pool ${i===0?'top':''}">
-      <div class="hd"><div><span class="nm">${p.loan}</span>${i===0?'<span class="badge">top pick</span>':''}</div>
+      <div class="hd"><div><span class="nm">${p.label}</span>${i===0?'<span class="badge">top pick</span>':''}</div>
         <div class="score" style="color:${sc(p.score)}">${p.score}</div></div>
       <div class="sub">${headline}</div>
       <div class="comps">${bars}</div></div>`;
@@ -209,7 +229,7 @@ function weightsHtml(){
 }
 
 const RAWCOLS=[
-  {k:"loan",l:"Pool",t:"txt"},
+  {k:"label",l:"Pool",t:"txt"},
   {k:"supplyApy",l:"Supply APY",f:"pct"},
   {k:"borrowApr",l:"Borrow APR",f:"pct"},
   {k:"util",l:"Util",f:"pct"},
@@ -222,7 +242,7 @@ const RAWCOLS=[
 function rawHtml(pools){
   pools.sort((a,b)=>{
     let av=a[sortKey], bv=b[sortKey];
-    if(sortKey==="loan") return sortDir*String(av).localeCompare(String(bv));
+    if(sortKey==="label") return sortDir*String(av).localeCompare(String(bv));
     if(av==null) return 1; if(bv==null) return -1; return sortDir*(av-bv);
   });
   const head=RAWCOLS.map(c=>`<th data-k="${c.k}" class="${c.k===sortKey?'sorted':''}">${c.l}${c.k===sortKey?(sortDir<0?' ▼':' ▲'):''}</th>`).join("");
@@ -247,7 +267,7 @@ function wireWeights(){
 function wireSort(){
   document.querySelectorAll("th").forEach(th=>{
     th.onclick=()=>{ const k=th.dataset.k;
-      if(k===sortKey) sortDir*=-1; else { sortKey=k; sortDir=(k==="loan")?1:-1; }
+      if(k===sortKey) sortDir*=-1; else { sortKey=k; sortDir=(k==="label")?1:-1; }
       render(); };
   });
 }
