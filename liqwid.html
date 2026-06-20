@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liqwid Finance — Market Monitor</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#11171f; --line:#1e2832; --line-soft:#161e27;
+    --ink:#e6edf3; --ink-dim:#8b9bab; --ink-faint:#5a6b7b;
+    --accent:#5b9df9;        /* liqwid blue */
+    --accent-dim:#2c5aa0;
+    --risk-lo:#3fb950; --risk-mid:#d29922; --risk-hi:#f85149;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  body{padding:clamp(16px,4vw,40px);max-width:1240px;margin:0 auto}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 20px;margin-bottom:6px}
+  h1{font-size:clamp(20px,3vw,26px);font-weight:650;letter-spacing:-.01em;margin:0}
+  h1 .mark{color:var(--accent)}
+  .sub{color:var(--ink-dim);font-size:13px;font-family:var(--mono)}
+  .sub a{color:var(--accent)}
+  .meta{margin:10px 0 22px;color:var(--ink-faint);font-family:var(--mono);font-size:12px;
+        display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+  .meta .dot{color:var(--accent-dim)}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
+  .search{flex:1 1 200px;min-width:160px}
+  input[type=search]{width:100%;background:var(--panel);border:1px solid var(--line);
+    color:var(--ink);font-family:var(--mono);font-size:13px;padding:9px 12px;border-radius:7px}
+  input[type=search]::placeholder{color:var(--ink-faint)}
+  input:focus{outline:2px solid var(--accent-dim);outline-offset:1px;border-color:transparent}
+  .hint{color:var(--ink-faint);font-size:12px;font-family:var(--mono)}
+  .unit-toggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .u-btn{background:transparent;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:12px;padding:8px 12px;cursor:pointer}
+  .u-btn.on{background:var(--accent-dim);color:#fff;font-weight:650}
+  .u-btn.disabled{opacity:.4;cursor:not-allowed}
+  .u-btn:not(.on):not(.disabled):hover{color:var(--ink)}
+  .wrap{border:1px solid var(--line);border-radius:10px;overflow:auto;background:var(--panel)}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  thead th{position:sticky;top:0;background:var(--panel);text-align:right;
+    font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--ink-dim);padding:13px 14px;cursor:pointer;
+    user-select:none;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child{text-align:left}
+  thead th:hover{color:var(--ink)}
+  thead th .arrow{color:var(--accent);font-size:10px;margin-left:4px;opacity:0}
+  thead th.sorted{color:var(--accent)} thead th.sorted .arrow{opacity:1}
+  tbody td{text-align:right;padding:12px 14px;font-family:var(--mono);font-size:12.5px;
+    border-bottom:1px solid var(--line-soft);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:#0e141b}
+  td.market{text-align:left;font-weight:550}
+  td.market .q{color:var(--ink-faint);font-size:11px}
+  td.pair{text-align:left;color:var(--ink-dim)}
+  .dim{color:var(--ink-dim)} .na{color:var(--ink-faint)}
+  .flag{font-size:10px;padding:1px 5px;border-radius:4px;margin-left:6px;font-family:var(--mono)}
+  .flag.frozen{background:#3a1f1f;color:#ff9b9b} .flag.supplyonly{background:#1f2a3a;color:#9bc4ff}
+  .ltv-cell{position:relative}
+  footer{margin-top:22px;color:var(--ink-faint);font-family:var(--mono);font-size:11.5px;line-height:1.6}
+  .err{background:#2a1518;border:1px solid #5c2327;color:#ffb3ad;padding:14px 16px;border-radius:8px;font-family:var(--mono);font-size:13px}
+</style>
+</head>
+<body>
+  <header>
+    <h1><span class="mark">◆</span> Liqwid Finance — Market Monitor</h1>
+    <span class="sub"><a href="index.html">← Surf dashboard</a></span>
+  </header>
+  <div class="meta" id="meta"></div>
+
+  <div class="controls">
+    <span class="search"><input id="q" type="search" placeholder="filter market or collateral (e.g. ADA, SNEK, USDC)" /></span>
+    <span class="unit-toggle" id="unitToggle">
+      <button class="u-btn on" data-unit="ADA">₳ ADA</button>
+      <button class="u-btn" data-unit="USD">$ USD</button>
+    </span>
+    <span class="hint" id="rateHint"></span>
+  </div>
+
+  <div id="mount"></div>
+
+  <footer id="foot"></footer>
+
+<script>
+let DATA=null, unit="ADA", rate=null;
+let state={ sortKey:"supplied", dir:-1, q:"" };
+
+const fmtPct=v=>v==null?"—":(v*100).toFixed(2)+"%";
+const sym=()=>unit==="USD"?"$":"₳";
+function money(ada){
+  if(ada==null) return "—";
+  let v=unit==="USD"&&rate?ada*rate:ada;
+  let s;
+  if(Math.abs(v)>=1e9) s=(v/1e9).toFixed(2)+"B";
+  else if(Math.abs(v)>=1e6) s=(v/1e6).toFixed(2)+"M";
+  else if(Math.abs(v)>=1e3) s=(v/1e3).toFixed(1)+"k";
+  else s=v.toFixed(2);
+  return sym()+s;
+}
+function riskColor(ltv){
+  if(ltv==null) return "var(--ink-faint)";
+  if(ltv>=0.7) return "var(--risk-hi)";
+  if(ltv>=0.5) return "var(--risk-mid)";
+  return "var(--risk-lo)";
+}
+
+// One row per market (collapsed) for the main table; collateral detail shown via count + best.
+function marketRows(){
+  const by={};
+  DATA.markets.forEach(r=>{
+    const id=r.market_id;
+    if(!by[id]){
+      by[id]={...r, collaterals:[], _best_ltv:null};
+    }
+    if(r.collateral_asset){
+      by[id].collaterals.push({sym:r.collateral_asset, ltv:r.max_ltv, thr:r.liq_threshold, w:r.collateral_weight});
+      if(r.max_ltv!=null && (by[id]._best_ltv==null || r.max_ltv>by[id]._best_ltv)) by[id]._best_ltv=r.max_ltv;
+    }
+  });
+  return Object.values(by);
+}
+
+const COLS=[
+  {key:"loan_asset",  label:"Market",        kind:"market"},
+  {key:"supplied",    label:"Supplied",      kind:"money"},
+  {key:"borrowed",    label:"Borrowed",      kind:"money"},
+  {key:"available",   label:"Liquidity",     kind:"money"},
+  {key:"utilization", label:"Util",          kind:"pct"},
+  {key:"supply_apy",  label:"Supply APY",    kind:"pct_supply"},
+  {key:"borrow_apr",  label:"Borrow APR",    kind:"pct"},
+  {key:"_ncoll",      label:"Collaterals",   kind:"ncoll"},
+  {key:"_best_ltv",   label:"Best Max LTV",  kind:"ltv"},
+];
+
+function render(){
+  const mount=document.getElementById("mount");
+  let rows=marketRows();
+  rows.forEach(r=>r._ncoll=r.collaterals.length);
+
+  const q=state.q.trim().toLowerCase();
+  if(q){
+    rows=rows.filter(r=>{
+      if((r.loan_asset||"").toLowerCase().includes(q)) return true;
+      return r.collaterals.some(c=>(c.sym||"").toLowerCase().includes(q));
+    });
+  }
+  rows.sort((a,b)=>{
+    const k=state.sortKey;
+    let av=a[k], bv=b[k];
+    if(k==="loan_asset") return state.dir*String(av).localeCompare(String(bv));
+    if(av==null) return 1; if(bv==null) return -1;
+    return state.dir*(av-bv);
+  });
+
+  const head=COLS.map(c=>{
+    const s=c.key===state.sortKey?" sorted":"";
+    return `<th class="${s}" data-k="${c.key}">${c.label}<span class="arrow">${state.dir<0?"▼":"▲"}</span></th>`;
+  }).join("");
+
+  const body=rows.map(r=>{
+    const supplyOnly=r._ncoll===0;
+    const tds=COLS.map(c=>{
+      if(c.kind==="market"){
+        const q = r.market_id && r.market_id!==r.loan_asset ? `<span class="q"> (q-rate ${r.exchange_rate? r.exchange_rate.toFixed(4):"?"})</span>`:"";
+        const flag = r.frozen?`<span class="flag frozen">frozen</span>`:(supplyOnly?`<span class="flag supplyonly">supply-only</span>`:"");
+        return `<td class="market">${r.loan_asset}${flag}</td>`;
+      }
+      if(c.kind==="money") return `<td class="dim">${money(r[c.key])}</td>`;
+      if(c.kind==="pct") return `<td class="dim">${fmtPct(r[c.key])}</td>`;
+      if(c.kind==="pct_supply") return `<td style="color:var(--accent)">${fmtPct(r[c.key])}</td>`;
+      if(c.kind==="ncoll") return `<td class="${supplyOnly?'na':'dim'}">${supplyOnly?"—":r._ncoll}</td>`;
+      if(c.kind==="ltv"){
+        const v=r._best_ltv;
+        return `<td style="color:${riskColor(v)};font-weight:600">${v==null?"—":fmtPct(v)}</td>`;
+      }
+      return `<td>${r[c.key]??"—"}</td>`;
+    }).join("");
+    return `<tr>${tds}</tr>`;
+  }).join("");
+
+  mount.innerHTML=`<div class="wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+
+  mount.querySelectorAll("th").forEach(th=>{
+    th.onclick=()=>{ const k=th.dataset.k;
+      if(state.sortKey===k) state.dir*=-1;
+      else { state.sortKey=k; state.dir=(k==="loan_asset")?1:-1; }
+      render(); };
+  });
+
+  document.getElementById("foot").innerHTML=
+    `Liqwid is a pooled (qToken) protocol: suppliers mint interest-bearing qTokens, and any qToken can collateralize borrowing across markets. `+
+    `Supply APY is derived as borrow&nbsp;APR × utilization × supplier&nbsp;share (the protocol routes ${DATA.markets[0]?.supplier_share!=null?Math.round(DATA.markets[0].supplier_share*100)+"%":"~80%"} of borrow interest to suppliers). `+
+    `“Best Max LTV” is the most generous weighted loan-to-value across a market’s accepted collateral. Not financial advice.`;
+}
+
+function freshness(iso,hrs){
+  if(!iso) return "updated unknown";
+  const f=new Date(iso), now=new Date(), m=Math.round((now-f)/60000);
+  const rel=m<1?"just now":m<60?m+"m ago":m<1440?Math.round(m/60)+"h ago":Math.round(m/1440)+"d ago";
+  let t="updated "+rel;
+  if(hrs){ const nx=new Date(f.getTime()+hrs*3600000), im=nx-now;
+    t+=" · next in "+(im<=0?"any moment":im<3600000?"~"+Math.round(im/60000)+"m":"~"+Math.round(im/3600000)+"h"); }
+  return t;
+}
+
+document.getElementById("q").addEventListener("input",e=>{ state.q=e.target.value; render(); });
+document.querySelectorAll("#unitToggle .u-btn").forEach(b=>{
+  b.onclick=()=>{ if(b.classList.contains("disabled"))return;
+    unit=b.dataset.unit;
+    document.querySelectorAll("#unitToggle .u-btn").forEach(x=>x.classList.toggle("on",x.dataset.unit===unit));
+    render(); };
+});
+
+async function boot(){
+  try{
+    const res=await fetch("data/liqwid_markets.json",{cache:"no-store"});
+    if(!res.ok) throw new Error("liqwid_markets.json HTTP "+res.status);
+    DATA=await res.json();
+    rate=(typeof DATA.ada_usd==="number"&&DATA.ada_usd>0)?DATA.ada_usd:null;
+    const usdBtn=document.querySelector('#unitToggle .u-btn[data-unit="USD"]');
+    if(!rate){ usdBtn.classList.add("disabled"); document.getElementById("rateHint").textContent="USD rate unavailable"; }
+    else document.getElementById("rateHint").textContent=`1 ₳ = $${rate.toFixed(4)}`;
+    document.getElementById("meta").innerHTML=
+      `<span>${freshness(DATA.fetched_at,DATA.refresh_hours)}</span><span class="dot">•</span>`+
+      `<span>${DATA.market_count} markets</span><span class="dot">•</span>`+
+      `<span>${DATA.count} market·collateral pairs</span><span class="dot">•</span>`+
+      `<span>source: Liqwid v2 API</span>`;
+    render();
+  }catch(e){
+    document.getElementById("mount").innerHTML=`<div class="err">Couldn't load Liqwid data — ${e.message}. Run the fetcher and serve over http.</div>`;
+  }
+}
+boot();
+</script>
+</body>
+</html>
