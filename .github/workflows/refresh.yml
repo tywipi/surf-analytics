@@ -2,7 +2,7 @@ name: Refresh Surf data
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 */6 * * *"   # every 6 hours (UTC)
   workflow_dispatch: {}
 
 permissions:
@@ -20,12 +20,14 @@ jobs:
         run: python scripts/fetch_surf.py --pretty
       - name: Fetch position risk data
         run: python scripts/fetch_positions.py --pretty
+      - name: Fetch Liqwid markets
+        run: python scripts/fetch_liqwid.py --pretty
       - name: Commit if changed
         run: |
           if [ -n "$(git status --porcelain data/)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add data/markets.json data/positions.json
+            git add data/
             git commit -m "chore: refresh Surf snapshots"
             git push
           else
