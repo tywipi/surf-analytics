@@ -90,8 +90,8 @@
   <div class="controls">
     <span class="search"><input id="q" type="search" placeholder="filter market or collateral (e.g. ADA, SNEK, USDC)" /></span>
     <span class="unit-toggle" id="unitToggle">
-      <button class="u-btn on" data-unit="ADA">₳ ADA</button>
-      <button class="u-btn" data-unit="USD">$ USD</button>
+      <button class="u-btn on" data-unit="USD">$ USD</button>
+      <button class="u-btn" data-unit="TOKEN">tokens</button>
     </span>
     <span class="hint" id="rateHint"></span>
   </div>
@@ -101,20 +101,27 @@
   <footer id="foot"></footer>
 
 <script>
-let DATA=null, unit="ADA", rate=null;
+let DATA=null, unit="USD";
 let state={ sortKey:"supplied", dir:-1, q:"", expanded:new Set() };
 
 const fmtPct=v=>v==null?"—":(v*100).toFixed(2)+"%";
-const sym=()=>unit==="USD"?"$":"₳";
-function money(ada){
-  if(ada==null) return "—";
-  let v=unit==="USD"&&rate?ada*rate:ada;
-  let s;
-  if(Math.abs(v)>=1e9) s=(v/1e9).toFixed(2)+"B";
-  else if(Math.abs(v)>=1e6) s=(v/1e6).toFixed(2)+"M";
-  else if(Math.abs(v)>=1e3) s=(v/1e3).toFixed(1)+"k";
-  else s=v.toFixed(2);
-  return sym()+s;
+function abbrev(v){
+  if(v==null) return "—";
+  const a=Math.abs(v);
+  if(a>=1e9) return (v/1e9).toFixed(2)+"B";
+  if(a>=1e6) return (v/1e6).toFixed(2)+"M";
+  if(a>=1e3) return (v/1e3).toFixed(1)+"k";
+  if(a>=1)   return v.toFixed(2);
+  if(a>0)    return v.toPrecision(2);
+  return "0";
+}
+// row r, which = 'supplied' | 'borrowed' | 'available'
+function money(r, which){
+  if(unit==="USD"){
+    const v=r[which+"_usd"];
+    return v==null ? "—" : "$"+abbrev(v);
+  }
+  return abbrev(r[which]); // native token amount, no symbol (asset varies)
 }
 function riskColor(ltv){
   if(ltv==null) return "var(--ink-faint)";
@@ -152,9 +159,9 @@ function marketRows(){
 
 const COLS=[
   {key:"loan_asset",  label:"Market",        kind:"market"},
-  {key:"supplied",    label:"Supplied",      kind:"money"},
-  {key:"borrowed",    label:"Borrowed",      kind:"money"},
-  {key:"available",   label:"Liquidity",     kind:"money"},
+  {key:"supplied",    label:"Supplied",      kind:"money", f:"supplied"},
+  {key:"borrowed",    label:"Borrowed",      kind:"money", f:"borrowed"},
+  {key:"available",   label:"Liquidity",     kind:"money", f:"available"},
   {key:"utilization", label:"Util",          kind:"pct"},
   {key:"supply_apy",  label:"Supply APY",    kind:"pct_supply"},
   {key:"borrow_apr",  label:"Borrow APR",    kind:"pct"},
@@ -201,7 +208,9 @@ function render(){
     });
   }
   rows.sort((a,b)=>{
-    const k=state.sortKey;
+    let k=state.sortKey;
+    // money columns sort by USD value when USD unit is active
+    if(unit==="USD" && (k==="supplied"||k==="borrowed"||k==="available")) k=k+"_usd";
     let av=a[k], bv=b[k];
     if(k==="loan_asset") return state.dir*String(av).localeCompare(String(bv));
     if(av==null) return 1; if(bv==null) return -1;
@@ -224,7 +233,7 @@ function render(){
         const flag = r.frozen?`<span class="flag frozen">frozen</span>`:(supplyOnly?`<span class="flag supplyonly">supply-only</span>`:"");
         return `<td class="market">${caret}${r.loan_asset}${q}${flag}</td>`;
       }
-      if(c.kind==="money") return `<td class="dim">${money(r[c.key])}</td>`;
+      if(c.kind==="money") return `<td class="dim">${money(r,c.f)}</td>`;
       if(c.kind==="pct") return `<td class="dim">${fmtPct(r[c.key])}</td>`;
       if(c.kind==="pct_supply") return `<td style="color:var(--accent)">${fmtPct(r[c.key])}</td>`;
       if(c.kind==="ncoll"){
@@ -284,8 +293,7 @@ function freshness(iso,hrs){
 
 document.getElementById("q").addEventListener("input",e=>{ state.q=e.target.value; render(); });
 document.querySelectorAll("#unitToggle .u-btn").forEach(b=>{
-  b.onclick=()=>{ if(b.classList.contains("disabled"))return;
-    unit=b.dataset.unit;
+  b.onclick=()=>{ unit=b.dataset.unit;
     document.querySelectorAll("#unitToggle .u-btn").forEach(x=>x.classList.toggle("on",x.dataset.unit===unit));
     render(); };
 });
@@ -295,10 +303,8 @@ async function boot(){
     const res=await fetch("data/liqwid_markets.json",{cache:"no-store"});
     if(!res.ok) throw new Error("liqwid_markets.json HTTP "+res.status);
     DATA=await res.json();
-    rate=(typeof DATA.ada_usd==="number"&&DATA.ada_usd>0)?DATA.ada_usd:null;
-    const usdBtn=document.querySelector('#unitToggle .u-btn[data-unit="USD"]');
-    if(!rate){ usdBtn.classList.add("disabled"); document.getElementById("rateHint").textContent="USD rate unavailable"; }
-    else document.getElementById("rateHint").textContent=`1 ₳ = $${rate.toFixed(4)}`;
+    const ada=DATA.ada_usd;
+    document.getElementById("rateHint").textContent = ada? `ADA $${ada.toFixed(4)} · values priced via Liqwid oracle` : "values priced via Liqwid oracle";
     document.getElementById("meta").innerHTML=
       `<span>${freshness(DATA.fetched_at,DATA.refresh_hours)}</span><span class="dot">•</span>`+
       `<span>${DATA.market_count} markets</span><span class="dot">•</span>`+
