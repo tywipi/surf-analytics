@@ -60,6 +60,24 @@
   .ltv-cell{position:relative}
   footer{margin-top:22px;color:var(--ink-faint);font-family:var(--mono);font-size:11.5px;line-height:1.6}
   .err{background:#2a1518;border:1px solid #5c2327;color:#ffb3ad;padding:14px 16px;border-radius:8px;font-family:var(--mono);font-size:13px}
+  tr.clickable{cursor:pointer}
+  tr.clickable:hover td{background:#0e141b}
+  .caret{display:inline-block;width:14px;color:var(--accent);font-size:10px}
+  .caret-sp{display:inline-block;width:14px}
+  td.market .q{color:var(--ink-faint);font-size:10.5px;margin-left:5px}
+  tr.detail td{padding:0;background:#0c1117;border-bottom:1px solid var(--line)}
+  .cpanel{padding:6px 14px 14px 28px}
+  .cpanel-h{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--ink-dim);padding:12px 0 8px}
+  .ctable{width:auto;min-width:520px;border-collapse:collapse}
+  .ctable th{position:static;background:transparent;text-align:right;padding:6px 18px;font-size:10px;
+    color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line-soft);cursor:default}
+  .ctable th.cleft,.ctable td.cleft{text-align:left}
+  .ctable td{text-align:right;padding:6px 18px;font-family:var(--mono);font-size:12px;border-bottom:1px solid var(--line-soft)}
+  .ctable tr:last-child td{border-bottom:none}
+  .ctable tr.dead td{opacity:.5}
+  .off{font-size:9px;color:var(--ink-faint);margin-left:7px;border:1px solid var(--line);padding:0 4px;border-radius:3px}
+  .cpanel-f{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);padding:10px 0 2px;max-width:680px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -84,7 +102,7 @@
 
 <script>
 let DATA=null, unit="ADA", rate=null;
-let state={ sortKey:"supplied", dir:-1, q:"" };
+let state={ sortKey:"supplied", dir:-1, q:"", expanded:new Set() };
 
 const fmtPct=v=>v==null?"—":(v*100).toFixed(2)+"%";
 const sym=()=>unit==="USD"?"$":"₳";
@@ -105,19 +123,30 @@ function riskColor(ltv){
   return "var(--risk-lo)";
 }
 
-// One row per market (collapsed) for the main table; collateral detail shown via count + best.
+// One row per market; carry full collateral detail for the expandable sub-table.
+// A collateral is "live" if its weight isn't effectively zero (Liqwid lists some at ~8e-7,
+// meaning allowed-but-worthless). We compute the LTV range over LIVE collaterals only.
+const DEAD_W = 1e-4; // weights below this are effectively disabled
 function marketRows(){
   const by={};
   DATA.markets.forEach(r=>{
     const id=r.market_id;
-    if(!by[id]){
-      by[id]={...r, collaterals:[], _best_ltv:null};
-    }
+    if(!by[id]) by[id]={...r, collaterals:[], _best_ltv:null, _worst_ltv:null, _ndead:0};
     if(r.collateral_asset){
-      by[id].collaterals.push({sym:r.collateral_asset, ltv:r.max_ltv, thr:r.liq_threshold, w:r.collateral_weight});
-      if(r.max_ltv!=null && (by[id]._best_ltv==null || r.max_ltv>by[id]._best_ltv)) by[id]._best_ltv=r.max_ltv;
+      const live = r.collateral_weight==null || r.collateral_weight>=DEAD_W;
+      by[id].collaterals.push({
+        sym:r.collateral_asset, ltv:r.max_ltv, thr:r.liq_threshold,
+        w:r.collateral_weight, pen:r.liq_penalty, live
+      });
+      if(!live) by[id]._ndead++;
+      if(live && r.max_ltv!=null){
+        if(by[id]._best_ltv==null || r.max_ltv>by[id]._best_ltv) by[id]._best_ltv=r.max_ltv;
+        if(by[id]._worst_ltv==null || r.max_ltv<by[id]._worst_ltv) by[id]._worst_ltv=r.max_ltv;
+      }
     }
   });
+  // sort each market's collaterals best-LTV first for the expanded view
+  Object.values(by).forEach(m=>m.collaterals.sort((a,b)=>(b.ltv??-1)-(a.ltv??-1)));
   return Object.values(by);
 }
 
@@ -130,8 +159,34 @@ const COLS=[
   {key:"supply_apy",  label:"Supply APY",    kind:"pct_supply"},
   {key:"borrow_apr",  label:"Borrow APR",    kind:"pct"},
   {key:"_ncoll",      label:"Collaterals",   kind:"ncoll"},
-  {key:"_best_ltv",   label:"Best Max LTV",  kind:"ltv"},
+  {key:"_best_ltv",   label:"Max LTV Range", kind:"ltvrange"},
 ];
+
+// Expanded sub-table: every accepted collateral with weight, weighted LTV, liq threshold, penalty.
+function collateralPanel(r){
+  const rowsHtml=r.collaterals.map(c=>{
+    const dead=!c.live;
+    const ltvTxt = c.ltv==null?"—":(dead?"~0%":fmtPct(c.ltv));
+    const thrTxt = c.thr==null?"—":(dead?"~0%":fmtPct(c.thr));
+    const wTxt   = c.w==null?"—":(c.w<DEAD_W?"≈0":c.w.toFixed(2));
+    const col = dead?"var(--ink-faint)":riskColor(c.ltv);
+    return `<tr class="${dead?'dead':''}">
+      <td class="cleft">${c.sym}${dead?'<span class="off">disabled</span>':''}</td>
+      <td>${wTxt}</td>
+      <td style="color:${col};font-weight:600">${ltvTxt}</td>
+      <td class="dim">${thrTxt}</td>
+      <td class="dim">${c.pen==null?"—":fmtPct(c.pen)}</td>
+    </tr>`;
+  }).join("");
+  return `<div class="cpanel">
+    <div class="cpanel-h">Collateral accepted in the ${r.loan_asset} market — weighted terms (best LTV first)</div>
+    <table class="ctable">
+      <thead><tr><th class="cleft">Collateral</th><th>Weight</th><th>Max LTV</th><th>Liq. Threshold</th><th>Liq. Penalty</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <div class="cpanel-f">Max LTV = base 86.96% × collateral weight. Disabled collaterals are listed by the protocol but carry a near-zero weight, so they grant effectively no borrowing power.</div>
+  </div>`;
+}
 
 function render(){
   const mount=document.getElementById("mount");
@@ -158,25 +213,40 @@ function render(){
     return `<th class="${s}" data-k="${c.key}">${c.label}<span class="arrow">${state.dir<0?"▼":"▲"}</span></th>`;
   }).join("");
 
-  const body=rows.map(r=>{
+  const body=rows.map((r,ri)=>{
     const supplyOnly=r._ncoll===0;
+    const open=state.expanded.has(r.market_id);
     const tds=COLS.map(c=>{
       if(c.kind==="market"){
-        const q = r.market_id && r.market_id!==r.loan_asset ? `<span class="q"> (q-rate ${r.exchange_rate? r.exchange_rate.toFixed(4):"?"})</span>`:"";
+        const caret = supplyOnly ? `<span class="caret-sp"></span>`
+          : `<span class="caret">${open?"▾":"▸"}</span>`;
+        const q = r.market_id && r.market_id!==r.loan_asset ? `<span class="q"> q${r.exchange_rate? r.exchange_rate.toFixed(4):"?"}</span>`:"";
         const flag = r.frozen?`<span class="flag frozen">frozen</span>`:(supplyOnly?`<span class="flag supplyonly">supply-only</span>`:"");
-        return `<td class="market">${r.loan_asset}${flag}</td>`;
+        return `<td class="market">${caret}${r.loan_asset}${q}${flag}</td>`;
       }
       if(c.kind==="money") return `<td class="dim">${money(r[c.key])}</td>`;
       if(c.kind==="pct") return `<td class="dim">${fmtPct(r[c.key])}</td>`;
       if(c.kind==="pct_supply") return `<td style="color:var(--accent)">${fmtPct(r[c.key])}</td>`;
-      if(c.kind==="ncoll") return `<td class="${supplyOnly?'na':'dim'}">${supplyOnly?"—":r._ncoll}</td>`;
-      if(c.kind==="ltv"){
-        const v=r._best_ltv;
-        return `<td style="color:${riskColor(v)};font-weight:600">${v==null?"—":fmtPct(v)}</td>`;
+      if(c.kind==="ncoll"){
+        if(supplyOnly) return `<td class="na">—</td>`;
+        const dead=r._ndead?`<span class="dim"> (${r._ndead} off)</span>`:"";
+        return `<td class="dim">${r._ncoll}${dead}</td>`;
+      }
+      if(c.kind==="ltvrange"){
+        if(supplyOnly||r._best_ltv==null) return `<td class="na">—</td>`;
+        const hi=r._best_ltv, lo=r._worst_ltv;
+        if(hi===lo) return `<td style="color:${riskColor(hi)};font-weight:600">${fmtPct(hi)}</td>`;
+        return `<td style="font-weight:600"><span style="color:${riskColor(lo)}">${fmtPct(lo)}</span>`+
+               `<span class="dim" style="font-weight:400">–</span>`+
+               `<span style="color:${riskColor(hi)}">${fmtPct(hi)}</span></td>`;
       }
       return `<td>${r[c.key]??"—"}</td>`;
     }).join("");
-    return `<tr>${tds}</tr>`;
+    let html=`<tr class="mrow${supplyOnly?'':' clickable'}" data-m="${r.market_id}">${tds}</tr>`;
+    if(open && !supplyOnly){
+      html+=`<tr class="detail"><td colspan="${COLS.length}">${collateralPanel(r)}</td></tr>`;
+    }
+    return html;
   }).join("");
 
   mount.innerHTML=`<div class="wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
@@ -188,10 +258,18 @@ function render(){
       render(); };
   });
 
+  mount.querySelectorAll("tr.clickable").forEach(tr=>{
+    tr.onclick=()=>{ const id=tr.dataset.m;
+      if(state.expanded.has(id)) state.expanded.delete(id);
+      else state.expanded.add(id);
+      render(); };
+  });
+
   document.getElementById("foot").innerHTML=
     `Liqwid is a pooled (qToken) protocol: suppliers mint interest-bearing qTokens, and any qToken can collateralize borrowing across markets. `+
-    `Supply APY is derived as borrow&nbsp;APR × utilization × supplier&nbsp;share (the protocol routes ${DATA.markets[0]?.supplier_share!=null?Math.round(DATA.markets[0].supplier_share*100)+"%":"~80%"} of borrow interest to suppliers). `+
-    `“Best Max LTV” is the most generous weighted loan-to-value across a market’s accepted collateral. Not financial advice.`;
+    `Supply APY is derived as borrow&nbsp;APR × utilization × supplier&nbsp;share (≈80%). `+
+    `Max LTV Range shows the worst→best weighted loan-to-value across a market's live collateral. `+
+    `<b>Click any market row</b> to see its full collateral matrix. See also the <a href="liqwid-collateral.html">collateral quality view →</a>. Not financial advice.`;
 }
 
 function freshness(iso,hrs){
