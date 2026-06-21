@@ -52,7 +52,7 @@ MARKETS_QUERY = """query($input: MarketsInput){
     results {
       id
       displayName
-      asset { id currencySymbol name decimals }
+      asset { id currencySymbol name decimals price }
       supply
       borrow
       liquidity
@@ -150,13 +150,23 @@ def normalize_market(m):
     if supplier_share is not None:
         supply_apy = borrow_apr * util * supplier_share
 
+    price = _f((m.get("asset") or {}).get("price"))  # USD per token
+    supplied = _f(m.get("supply"))
+    borrowed = _f(m.get("borrow"))
+    available = _f(m.get("liquidity"))
+
     base = {
         "market_id": m.get("id"),
         "loan_asset": m.get("displayName") or m.get("id"),
         "decimals": (m.get("asset") or {}).get("decimals"),
-        "supplied": _f(m.get("supply")),
-        "borrowed": _f(m.get("borrow")),
-        "available": _f(m.get("liquidity")),
+        "price_usd": price,
+        "supplied": supplied,
+        "borrowed": borrowed,
+        "available": available,
+        # USD-denominated values (token amount x USD price). None if price missing.
+        "supplied_usd": (supplied * price) if (supplied is not None and price is not None) else None,
+        "borrowed_usd": (borrowed * price) if (borrowed is not None and price is not None) else None,
+        "available_usd": (available * price) if (available is not None and price is not None) else None,
         "utilization": util,
         "supply_apy": supply_apy,
         "borrow_apr": borrow_apr,
