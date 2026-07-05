@@ -1,10 +1,10 @@
 {
   "source": "https://surflending.org/api/getAllPoolInfos",
-  "fetched_at": "2026-07-04T18:54:49.857473+00:00",
+  "fetched_at": "2026-07-05T01:58:51.324221+00:00",
   "refresh_hours": 6,
   "pool_count": 37,
   "count": 37,
-  "ada_usd": 0.194789,
+  "ada_usd": 0.191158,
   "ada_usd_source": "coingecko",
   "markets": [
     {
@@ -17,7 +17,7 @@
       "utilization": 0.7955,
       "supply_apy": 0.03080619062628258,
       "borrow_apr": 0.0959,
-      "historical_apy": 0.16648124951080145,
+      "historical_apy": 0.16633123461085297,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -37,18 +37,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.03080619062628258,
         "supplyApyAdjustment": 0.0051102876180124,
-        "historicalApy": 0.16648124951080145,
+        "historicalApy": 0.16633123461085297,
         "borrowApr": 0.0959,
         "cToken": {
           "policyId": "cfdd3b08ff749510404b9ff51baeaad83ff69a826158cad216679333",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 13577433903,
-        "totalUnpaidInterest": 43080040,
+        "totalUnpaidInterest": 43405632,
         "u": 7955
       },
       "collateral_asset": "BODEGA",
-      "collateral_price": 0.089948126483824,
+      "collateral_price": 0.09205111628313449,
       "max_ltv": 0.25,
       "recommended_ltv": 0.1875,
       "liq_threshold": 0.65
@@ -63,7 +63,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.05,
-      "historical_apy": 0.09460788167233969,
+      "historical_apy": 0.09452421772555297,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -83,7 +83,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.09460788167233969,
+        "historicalApy": 0.09452421772555297,
         "borrowApr": 0.05,
         "cToken": {
           "policyId": "0d2f3d012aae4965c12f2916fdfea8d142b92b70790431331da7ca9d",
@@ -94,7 +94,7 @@
         "u": 0
       },
       "collateral_asset": "MIN",
-      "collateral_price": 0.018918547298730225,
+      "collateral_price": 0.01851871416814051,
       "max_ltv": 0.55,
       "recommended_ltv": 0.41250000000000003,
       "liq_threshold": 0.75
@@ -104,12 +104,12 @@
       "loan_asset": "ADA",
       "loan_price": 1,
       "supplied": 356033.577217,
-      "borrowed": 245413.883824,
-      "available": 110619.69339300002,
-      "utilization": 0.6892,
-      "supply_apy": 0.06345776956867347,
+      "borrowed": 245650.738204,
+      "available": 110382.83901300002,
+      "utilization": 0.6899,
+      "supply_apy": 0.0635022088395638,
       "borrow_apr": 0.0918,
-      "historical_apy": 0.05330554291345346,
+      "historical_apy": 0.053235799124388805,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -123,24 +123,24 @@
         "recommendedBorrowLTV": 0.6000000000000001,
         "liquidationThresholdLTV": 0.81,
         "totalSupplied": 356033577217,
-        "totalBorrowed": 245413883824,
+        "totalBorrowed": 245650738204,
         "totalVolume": 0,
         "reserve": 652550996,
         "reserveFactor": 0.1,
-        "supplyApy": 0.06345776956867347,
-        "supplyApyAdjustment": 0.007767504279910801,
-        "historicalApy": 0.05330554291345346,
+        "supplyApy": 0.0635022088395638,
+        "supplyApyAdjustment": 0.00775087281625424,
+        "historicalApy": 0.053235799124388805,
         "borrowApr": 0.0918,
         "cToken": {
           "policyId": "e60c1e5a1c8be228015c951be7f9c6cea6aded0e0c2526b9bd1a1d1c",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 344568175487,
-        "totalUnpaidInterest": 1221936260,
-        "u": 6892
+        "totalUnpaidInterest": 1238020568,
+        "u": 6899
       },
       "collateral_asset": "NIGHT",
-      "collateral_price": 0.17349910563123766,
+      "collateral_price": 0.17936959299836883,
       "max_ltv": 0.8,
       "recommended_ltv": 0.6000000000000001,
       "liq_threshold": 0.81
@@ -148,14 +148,14 @@
     {
       "pool_id": "166ccce4e5f870f235f080125e9f6a79b3e679be5ca0d6afb4b71db78d734e61:1",
       "loan_asset": "USDCx",
-      "loan_price": 5.083504352741464,
+      "loan_price": 5.251080547917386,
       "supplied": 810.046775,
       "borrowed": 492.980892,
       "available": 317.06588300000004,
       "utilization": 0.6085,
       "supply_apy": 0.027568820834574646,
       "borrow_apr": 0.1906,
-      "historical_apy": 0.0750379126654015,
+      "historical_apy": 0.074851663367691,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -164,7 +164,7 @@
           "assetName": "5553444378",
           "decimals": 6
         },
-        "price": 5.083504352741464,
+        "price": 5.251080547917386,
         "maxBorrowLTV": 0.7,
         "recommendedBorrowLTV": 0.5249999999999999,
         "liquidationThresholdLTV": 0.8,
@@ -175,18 +175,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.027568820834574646,
         "supplyApyAdjustment": 0,
-        "historicalApy": 0.0750379126654015,
+        "historicalApy": 0.074851663367691,
         "borrowApr": 0.1906,
         "cToken": {
           "policyId": "3822a3e1f4c41c468cacc7fd3e17dbe28cd362920a31c1dfb06e33d1",
           "assetName": "0014df10665553444378"
         },
         "totalCToken": 790635039,
-        "totalUnpaidInterest": 5092288,
+        "totalUnpaidInterest": 5110257,
         "u": 6085
       },
       "collateral_asset": "NIGHT",
-      "collateral_price": 0.03463040552229761,
+      "collateral_price": 0.03419648459962162,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.8
@@ -201,7 +201,7 @@
       "utilization": 0.6799,
       "supply_apy": 0.07266579639503758,
       "borrow_apr": 0.0914,
-      "historical_apy": 0.1854714859024451,
+      "historical_apy": 0.18463534418459226,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -221,18 +221,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.07266579639503758,
         "supplyApyAdjustment": 0.008000897042346067,
-        "historicalApy": 0.1854714859024451,
+        "historicalApy": 0.18463534418459226,
         "borrowApr": 0.0914,
         "cToken": {
           "policyId": "125ae07c28fd5514869f28d07bcdd824e2190541b1f8fda968a20ad5",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 182096833688,
-        "totalUnpaidInterest": 635106945,
+        "totalUnpaidInterest": 644898945,
         "u": 6799
       },
       "collateral_asset": "ASCEND",
-      "collateral_price": 0.45716946114799817,
+      "collateral_price": 0.4456185665734735,
       "max_ltv": 0.45,
       "recommended_ltv": 0.3375,
       "liq_threshold": 0.55
@@ -247,7 +247,7 @@
       "utilization": 0.292,
       "supply_apy": 0.038478942683721463,
       "borrow_apr": 0.0763,
-      "historical_apy": 0.07184433833452353,
+      "historical_apy": 0.0717674839161977,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -267,18 +267,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.038478942683721463,
         "supplyApyAdjustment": 0.01769938766605423,
-        "historicalApy": 0.07184433833452353,
+        "historicalApy": 0.0717674839161977,
         "borrowApr": 0.0763,
         "cToken": {
           "policyId": "fc7e2acff1c4b38953c5c5cc2934f489d4eb0d78840a8f410851df53",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 10118238206,
-        "totalUnpaidInterest": 16427678,
+        "totalUnpaidInterest": 16606240,
         "u": 2920
       },
       "collateral_asset": "SURGE",
-      "collateral_price": 0.15463280453302042,
+      "collateral_price": 0.1528894510939042,
       "max_ltv": 0.35,
       "recommended_ltv": 0.26249999999999996,
       "liq_threshold": 0.5
@@ -293,7 +293,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.065,
-      "historical_apy": 0.05470237957537494,
+      "historical_apy": 0.05464941093177256,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -313,7 +313,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.05470237957537494,
+        "historicalApy": 0.05464941093177256,
         "borrowApr": 0.065,
         "cToken": {
           "policyId": "e08abbbc788dc1f33f60219074a11bea0f9168709e3430cef2002e7d",
@@ -324,7 +324,7 @@
         "u": 0
       },
       "collateral_asset": "AGENT",
-      "collateral_price": 0.0009523440529559274,
+      "collateral_price": 0.0009711759670180187,
       "max_ltv": 0.25,
       "recommended_ltv": 0.1875,
       "liq_threshold": 0.45
@@ -339,7 +339,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.05,
-      "historical_apy": 0.02445724220946599,
+      "historical_apy": 0.024433899424044503,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -359,7 +359,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.02445724220946599,
+        "historicalApy": 0.024433899424044503,
         "borrowApr": 0.05,
         "cToken": {
           "policyId": "161f099e7035afedf453c45572ee233442d99016efbd7baa3afd0a57",
@@ -370,7 +370,7 @@
         "u": 0
       },
       "collateral_asset": "FLDT",
-      "collateral_price": 0.25594451529357726,
+      "collateral_price": 0.25622197319913764,
       "max_ltv": 0.5,
       "recommended_ltv": 0.375,
       "liq_threshold": 0.6
@@ -378,14 +378,14 @@
     {
       "pool_id": "1e227cfc5b191e53ba50c33b42b349d82d8c28f7193ea6adf7a43df41ae32f38:5",
       "loan_asset": "IAG",
-      "loan_price": 0.12462173609830923,
+      "loan_price": 0.12444399158537243,
       "supplied": 14306.129075,
       "borrowed": 0.0,
       "available": 14306.129075,
       "utilization": 0.0,
       "supply_apy": 0.0,
       "borrow_apr": 0.09,
-      "historical_apy": 2.4835043010762448e-05,
+      "historical_apy": 2.4811623317688714e-05,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -394,7 +394,7 @@
           "assetName": "494147",
           "decimals": 6
         },
-        "price": 0.12462173609830923,
+        "price": 0.12444399158537243,
         "maxBorrowLTV": 0.6,
         "recommendedBorrowLTV": 0.44999999999999996,
         "liquidationThresholdLTV": 0.8,
@@ -405,7 +405,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0,
         "supplyApyAdjustment": 0,
-        "historicalApy": 2.4835043010762448e-05,
+        "historicalApy": 2.4811623317688714e-05,
         "borrowApr": 0.09,
         "cToken": {
           "policyId": "64aad4aba1e248748a695293db79cc9be9efd66eb6643c6eb3f442e0",
@@ -416,7 +416,7 @@
         "u": 0
       },
       "collateral_asset": "ADA",
-      "collateral_price": 8.033769181283962,
+      "collateral_price": 8.035743528155548,
       "max_ltv": 0.6,
       "recommended_ltv": 0.44999999999999996,
       "liq_threshold": 0.8
@@ -424,12 +424,12 @@
     {
       "pool_id": "1e227cfc5b191e53ba50c33b42b349d82d8c28f7193ea6adf7a43df41ae32f38:6",
       "loan_asset": "FLDT",
-      "loan_price": 0.25594451529357726,
+      "loan_price": 0.25622197319913764,
       "supplied": 300.0,
       "borrowed": 5.066508,
       "available": 294.933492,
       "utilization": 0.0168,
-      "supply_apy": 0.004058037370772034,
+      "supply_apy": 0.0040543745225857354,
       "borrow_apr": 0.0403,
       "historical_apy": 0.0,
       "total_volume": 0.0,
@@ -440,7 +440,7 @@
           "assetName": "0014df10464c4454",
           "decimals": 6
         },
-        "price": 0.25594451529357726,
+        "price": 0.25622197319913764,
         "maxBorrowLTV": 0.6,
         "recommendedBorrowLTV": 0.44999999999999996,
         "liquidationThresholdLTV": 0.8,
@@ -449,8 +449,8 @@
         "totalVolume": 0,
         "reserve": 0,
         "reserveFactor": 0.1,
-        "supplyApy": 0.004058037370772034,
-        "supplyApyAdjustment": 0.003382502970772034,
+        "supplyApy": 0.0040543745225857354,
+        "supplyApyAdjustment": 0.0033788401225857355,
         "historicalApy": 0,
         "borrowApr": 0.0403,
         "cToken": {
@@ -458,11 +458,11 @@
           "assetName": "0014df10660014df10464c4454"
         },
         "totalCToken": 300000000,
-        "totalUnpaidInterest": 110720,
+        "totalUnpaidInterest": 110883,
         "u": 168
       },
       "collateral_asset": "ADA",
-      "collateral_price": 3.9070968129673154,
+      "collateral_price": 3.9578577839766154,
       "max_ltv": 0.6,
       "recommended_ltv": 0.44999999999999996,
       "liq_threshold": 0.8
@@ -477,7 +477,7 @@
       "utilization": 0.1688,
       "supply_apy": 0.03519859348657248,
       "borrow_apr": 0.0715,
-      "historical_apy": 0.058783220245351986,
+      "historical_apy": 0.058216912367019535,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -497,18 +497,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.03519859348657248,
         "supplyApyAdjustment": 0.02077875335432138,
-        "historicalApy": 0.058783220245351986,
+        "historicalApy": 0.058216912367019535,
         "borrowApr": 0.0715,
         "cToken": {
           "policyId": "89c8a6752c3b72be92a76968dd420300e8a7d75d66166136b5df6329",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 22995074588,
-        "totalUnpaidInterest": 15911072,
+        "totalUnpaidInterest": 16179881,
         "u": 1688
       },
       "collateral_asset": "ATLAS",
-      "collateral_price": 1.1296496047048075,
+      "collateral_price": 1.1471850079547108,
       "max_ltv": 0.45,
       "recommended_ltv": 0.3375,
       "liq_threshold": 0.55
@@ -516,14 +516,14 @@
     {
       "pool_id": "20d0fe240d88bf1e67ae69018f0bc5c897938532e4478326becaedab52ebf6e5:1",
       "loan_asset": "USDM",
-      "loan_price": 5.130370415538028,
+      "loan_price": 5.295645111734141,
       "supplied": 2128.567005,
       "borrowed": 2128.4,
       "available": 0.16700499999979002,
       "utilization": 0.9999,
       "supply_apy": 0.11379981434974841,
       "borrow_apr": 0.4957,
-      "historical_apy": 0.028082483717813966,
+      "historical_apy": 0.027997036417186205,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -532,7 +532,7 @@
           "assetName": "0014df105553444d",
           "decimals": 6
         },
-        "price": 5.130370415538028,
+        "price": 5.295645111734141,
         "maxBorrowLTV": 0.7,
         "recommendedBorrowLTV": 0.5249999999999999,
         "liquidationThresholdLTV": 0.8,
@@ -543,18 +543,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.11379981434974841,
         "supplyApyAdjustment": 0,
-        "historicalApy": 0.028082483717813966,
+        "historicalApy": 0.027997036417186205,
         "borrowApr": 0.4957,
         "cToken": {
           "policyId": "be2142768288c61c14f6154d00b9a4791eed68935ff4ae786309ed8d",
           "assetName": "0014df10660014df105553444d"
         },
         "totalCToken": 2112866448,
-        "totalUnpaidInterest": 51984086,
+        "totalUnpaidInterest": 52179000,
         "u": 9999
       },
       "collateral_asset": "NIGHT",
-      "collateral_price": 0.033701779498979866,
+      "collateral_price": 0.033846417250026295,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.8
@@ -569,7 +569,7 @@
       "utilization": 0.3402,
       "supply_apy": 0.039254587818064575,
       "borrow_apr": 0.067,
-      "historical_apy": 0.046831197485896814,
+      "historical_apy": 0.04678674546207495,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -589,18 +589,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.039254587818064575,
         "supplyApyAdjustment": 0.01649487600354142,
-        "historicalApy": 0.046831197485896814,
+        "historicalApy": 0.04678674546207495,
         "borrowApr": 0.067,
         "cToken": {
           "policyId": "304579019ec64618bb78dba6a3362848976e5b6902ec261368ad16fc",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 14125609451,
-        "totalUnpaidInterest": 107283111,
+        "totalUnpaidInterest": 107552270,
         "u": 3402
       },
       "collateral_asset": "WMTX",
-      "collateral_price": 0.1669148839302561,
+      "collateral_price": 0.16776237626848647,
       "max_ltv": 0.4,
       "recommended_ltv": 0.30000000000000004,
       "liq_threshold": 0.45
@@ -615,7 +615,7 @@
       "utilization": 0.0382,
       "supply_apy": 0.02652941017531884,
       "borrow_apr": 0.0664,
-      "historical_apy": 0.02585972229401845,
+      "historical_apy": 0.025832940841789886,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -635,18 +635,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.02652941017531884,
         "supplyApyAdjustment": 0.02404411864042573,
-        "historicalApy": 0.02585972229401845,
+        "historicalApy": 0.025832940841789886,
         "borrowApr": 0.0664,
         "cToken": {
           "policyId": "65734a8fccae32590ae59533067015b8f64879a3e82ccccd3ac3f58e",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 999733412,
-        "totalUnpaidInterest": 289626,
+        "totalUnpaidInterest": 291666,
         "u": 382
       },
       "collateral_asset": "CHAD",
-      "collateral_price": 0.0005791427912900423,
+      "collateral_price": 0.0005998408252829568,
       "max_ltv": 0.2,
       "recommended_ltv": 0.15000000000000002,
       "liq_threshold": 0.45
@@ -661,7 +661,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.065,
-      "historical_apy": 0.009478498307738281,
+      "historical_apy": 0.00946728558217802,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -681,7 +681,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.009478498307738281,
+        "historicalApy": 0.00946728558217802,
         "borrowApr": 0.065,
         "cToken": {
           "policyId": "9a847c6436e0d476422f04aaac25ec99d69dc81c21f8513a78832407",
@@ -692,7 +692,7 @@
         "u": 0
       },
       "collateral_asset": "INDY",
-      "collateral_price": 0.6125960218702439,
+      "collateral_price": 0.6034636738010973,
       "max_ltv": 0.35,
       "recommended_ltv": 0.26249999999999996,
       "liq_threshold": 0.45
@@ -707,7 +707,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.065,
-      "historical_apy": 0.0910674195562502,
+      "historical_apy": 0.09098365529505759,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -727,7 +727,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.0910674195562502,
+        "historicalApy": 0.09098365529505759,
         "borrowApr": 0.065,
         "cToken": {
           "policyId": "189b5e3d5698ce893eca9623292ff3d42129a32b22bd7a919cd2ab82",
@@ -738,7 +738,7 @@
         "u": 0
       },
       "collateral_asset": "SPLASH",
-      "collateral_price": 0.014056377126617392,
+      "collateral_price": 0.01407025010393199,
       "max_ltv": 0.35,
       "recommended_ltv": 0.26249999999999996,
       "liq_threshold": 0.75
@@ -748,12 +748,12 @@
       "loan_asset": "ADA",
       "loan_price": 1,
       "supplied": 4329115.841272,
-      "borrowed": 3386908.190624,
-      "available": 942207.6506480002,
-      "utilization": 0.7823,
-      "supply_apy": 0.07614272185502159,
-      "borrow_apr": 0.0899,
-      "historical_apy": 0.05079749678427792,
+      "borrowed": 3389525.690624,
+      "available": 939590.1506480002,
+      "utilization": 0.7829,
+      "supply_apy": 0.07618196214246793,
+      "borrow_apr": 0.09,
+      "historical_apy": 0.050753849720280186,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -767,24 +767,24 @@
         "recommendedBorrowLTV": 0.3375,
         "liquidationThresholdLTV": 0.65,
         "totalSupplied": 4329115841272,
-        "totalBorrowed": 3386908190624,
+        "totalBorrowed": 3389525690624,
         "totalVolume": 0,
         "reserve": 3659332871,
         "reserveFactor": 0.1,
-        "supplyApy": 0.07614272185502159,
-        "supplyApyAdjustment": 0.005441109023148458,
-        "historicalApy": 0.05079749678427792,
-        "borrowApr": 0.0899,
+        "supplyApy": 0.07618196214246793,
+        "supplyApyAdjustment": 0.005425993350018127,
+        "historicalApy": 0.050753849720280186,
+        "borrowApr": 0.09,
         "cToken": {
           "policyId": "c14344952de3ee44275fe922a12f6f4148598960d00889b583e27a86",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 4127350605266,
-        "totalUnpaidInterest": 29122742461,
-        "u": 7823
+        "totalUnpaidInterest": 29371570632,
+        "u": 7829
       },
       "collateral_asset": "STRIKE",
-      "collateral_price": 3.969200152250973,
+      "collateral_price": 3.9081740607752753,
       "max_ltv": 0.45,
       "recommended_ltv": 0.3375,
       "liq_threshold": 0.65
@@ -794,12 +794,12 @@
       "loan_asset": "ADA",
       "loan_price": 1,
       "supplied": 8992.069649,
-      "borrowed": 2100.0,
-      "available": 6892.069648999999,
-      "utilization": 0.2335,
-      "supply_apy": 0.034341564654066216,
-      "borrow_apr": 0.074,
-      "historical_apy": 0.10587611467699132,
+      "borrowed": 4600.0,
+      "available": 4392.069648999999,
+      "utilization": 0.5115,
+      "supply_apy": 0.047964679774579445,
+      "borrow_apr": 0.0848,
+      "historical_apy": 0.10577128866001595,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -813,24 +813,24 @@
         "recommendedBorrowLTV": 0.30000000000000004,
         "liquidationThresholdLTV": 0.6,
         "totalSupplied": 8992069649,
-        "totalBorrowed": 2100000000,
+        "totalBorrowed": 4600000000,
         "totalVolume": 0,
         "reserve": 13642976,
         "reserveFactor": 0.1,
-        "supplyApy": 0.034341564654066216,
-        "supplyApyAdjustment": 0.019161522091208617,
-        "historicalApy": 0.10587611467699132,
-        "borrowApr": 0.074,
+        "supplyApy": 0.047964679774579445,
+        "supplyApyAdjustment": 0.012210953152171253,
+        "historicalApy": 0.10577128866001595,
+        "borrowApr": 0.0848,
         "cToken": {
           "policyId": "b3016b74676c5a9dd3fa00e94a486908fad3b57652ac37cffe2fa2bc",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 8251976261,
-        "totalUnpaidInterest": 4565400,
-        "u": 2335
+        "totalUnpaidInterest": 5848166,
+        "u": 5115
       },
       "collateral_asset": "BTN",
-      "collateral_price": 0.1406995178442996,
+      "collateral_price": 0.1409867365047606,
       "max_ltv": 0.4,
       "recommended_ltv": 0.30000000000000004,
       "liq_threshold": 0.6
@@ -845,7 +845,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.065,
-      "historical_apy": 0.06217276980037578,
+      "historical_apy": 0.06211481733667279,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -865,7 +865,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.06217276980037578,
+        "historicalApy": 0.06211481733667279,
         "borrowApr": 0.065,
         "cToken": {
           "policyId": "055a6c9a02158a8ae4c82baed13db8162c28e532a0b84b10f29b2cb4",
@@ -876,7 +876,7 @@
         "u": 0
       },
       "collateral_asset": "HOSKY",
-      "collateral_price": 3.7866462735226476e-08,
+      "collateral_price": 3.789567801294187e-08,
       "max_ltv": 0.38,
       "recommended_ltv": 0.28500000000000003,
       "liq_threshold": 0.45
@@ -891,7 +891,7 @@
       "utilization": 0.9999,
       "supply_apy": 0.10110576091308401,
       "borrow_apr": 0.4996,
-      "historical_apy": 0.06965978177247556,
+      "historical_apy": 0.06929032115086242,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -911,18 +911,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.10110576091308401,
         "supplyApyAdjustment": 5.159393236170429e-07,
-        "historicalApy": 0.06965978177247556,
+        "historicalApy": 0.06929032115086242,
         "borrowApr": 0.4996,
         "cToken": {
           "policyId": "daa59d07e4c35a2b32c36017534b3346e0576968d45d5b0e5cf41436",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 47947507437,
-        "totalUnpaidInterest": 302615525,
+        "totalUnpaidInterest": 306568034,
         "u": 9999
       },
       "collateral_asset": "COCK",
-      "collateral_price": 0.004401144757098357,
+      "collateral_price": 0.004264653479826384,
       "max_ltv": 0.25,
       "recommended_ltv": 0.1875,
       "liq_threshold": 0.45
@@ -937,7 +937,7 @@
       "utilization": 0.1243,
       "supply_apy": 0.02997336713904051,
       "borrow_apr": 0.0698,
-      "historical_apy": 0.02802478023301269,
+      "historical_apy": 0.027906957116749398,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -957,14 +957,14 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.02997336713904051,
         "supplyApyAdjustment": 0.021891645538099684,
-        "historicalApy": 0.02802478023301269,
+        "historicalApy": 0.027906957116749398,
         "borrowApr": 0.0698,
         "cToken": {
           "policyId": "1b2a6440c7cfa6b70d7496e435d6398d70d5241f918074c221d39133",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 4000000000,
-        "totalUnpaidInterest": 1152218,
+        "totalUnpaidInterest": 1178369,
         "u": 1243
       },
       "collateral_asset": "PULSE",
@@ -976,14 +976,14 @@
     {
       "pool_id": "75aed74e5631abc61fca886f6dcc74e768931718fd0e96a26d790ea83da4a0e5:3",
       "loan_asset": "BTC",
-      "loan_price": 328591.32283145376,
+      "loan_price": 324743.8067568656,
       "supplied": 0.01102496,
       "borrowed": 0.0,
       "available": 0.01102496,
       "utilization": 0.0,
       "supply_apy": 0.0,
       "borrow_apr": 0.024,
-      "historical_apy": 0.038513440967979484,
+      "historical_apy": 0.038472042621128244,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -992,7 +992,7 @@
           "assetName": "425443",
           "decimals": 8
         },
-        "price": 328591.32283145376,
+        "price": 324743.8067568656,
         "maxBorrowLTV": 0.38,
         "recommendedBorrowLTV": 0.28500000000000003,
         "liquidationThresholdLTV": 0.45,
@@ -1003,7 +1003,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0,
         "supplyApyAdjustment": 0,
-        "historicalApy": 0.038513440967979484,
+        "historicalApy": 0.038472042621128244,
         "borrowApr": 0.024,
         "cToken": {
           "policyId": "ecf7655cab5ac0ad8c45985f21f0b3c0bfa89588b834c25c0edd38dd",
@@ -1014,7 +1014,7 @@
         "u": 0
       },
       "collateral_asset": "ADA",
-      "collateral_price": 3.043293996271885e-06,
+      "collateral_price": 3.079350488579744e-06,
       "max_ltv": 0.38,
       "recommended_ltv": 0.28500000000000003,
       "liq_threshold": 0.45
@@ -1022,14 +1022,14 @@
     {
       "pool_id": "82bbed6b55fca8e6890680af74c92ebbc7b62500351255c07bfe3ec01c77b669:1",
       "loan_asset": "NIGHT",
-      "loan_price": 0.17349910563123766,
+      "loan_price": 0.17936959299836883,
       "supplied": 1874205.759366,
       "borrowed": 151010.0,
       "available": 1723195.759366,
       "utilization": 0.0805,
-      "supply_apy": 0.012460390884793272,
+      "supply_apy": 0.01215806550270239,
       "borrow_apr": 0.0417,
-      "historical_apy": 0.02040010907426626,
+      "historical_apy": 0.02037150655040154,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1038,7 +1038,7 @@
           "assetName": "4e49474854",
           "decimals": 6
         },
-        "price": 0.17349910563123766,
+        "price": 0.17936959299836883,
         "maxBorrowLTV": 0.8,
         "recommendedBorrowLTV": 0.6000000000000001,
         "liquidationThresholdLTV": 0.81,
@@ -1047,20 +1047,20 @@
         "totalVolume": 0,
         "reserve": 343952626,
         "reserveFactor": 0.1,
-        "supplyApy": 0.012460390884793272,
-        "supplyApyAdjustment": 0.009237389904344154,
-        "historicalApy": 0.02040010907426626,
+        "supplyApy": 0.01215806550270239,
+        "supplyApyAdjustment": 0.008935064522253273,
+        "historicalApy": 0.02037150655040154,
         "borrowApr": 0.0417,
         "cToken": {
           "policyId": "c2fffe57227585d1a3a7dbb90fde2ed49303d83c78db1f0ca929d9d5",
           "assetName": "0014df10664e49474854"
         },
         "totalCToken": 1852422131093,
-        "totalUnpaidInterest": 1475789868,
+        "totalUnpaidInterest": 1480650472,
         "u": 805
       },
       "collateral_asset": "ADA",
-      "collateral_price": 5.606236929575031,
+      "collateral_price": 5.615263385839748,
       "max_ltv": 0.8,
       "recommended_ltv": 0.6000000000000001,
       "liq_threshold": 0.81
@@ -1068,14 +1068,14 @@
     {
       "pool_id": "917d1447c97018de318f1228ddc561ffc0a0e8571d29d16188cdbd2bb979c52c:0",
       "loan_asset": "USDCx",
-      "loan_price": 5.083504352741464,
+      "loan_price": 5.251080547917386,
       "supplied": 1041.430311,
       "borrowed": 380.0,
       "available": 661.4303110000001,
       "utilization": 0.3648,
-      "supply_apy": 0.07276403667375654,
+      "supply_apy": 0.07125704712439328,
       "borrow_apr": 0.0882,
-      "historical_apy": 0.015100766764055251,
+      "historical_apy": 0.015064640143441554,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1084,7 +1084,7 @@
           "assetName": "5553444378",
           "decimals": 6
         },
-        "price": 5.083504352741464,
+        "price": 5.251080547917386,
         "maxBorrowLTV": 0.7,
         "recommendedBorrowLTV": 0.5249999999999999,
         "liquidationThresholdLTV": 0.8,
@@ -1093,20 +1093,20 @@
         "totalVolume": 0,
         "reserve": 206267,
         "reserveFactor": 0.1,
-        "supplyApy": 0.07276403667375654,
-        "supplyApyAdjustment": 0.047222241203584175,
-        "historicalApy": 0.015100766764055251,
+        "supplyApy": 0.07125704712439328,
+        "supplyApyAdjustment": 0.045715251654220905,
+        "historicalApy": 0.015064640143441554,
         "borrowApr": 0.0882,
         "cToken": {
           "policyId": "4808e6d5abc07f657b43d682ab9db904345220b8407ff03f16e68b80",
           "assetName": "0014df10665553444378"
         },
         "totalCToken": 1036166929,
-        "totalUnpaidInterest": 220222,
+        "totalUnpaidInterest": 241626,
         "u": 3648
       },
       "collateral_asset": "ADA",
-      "collateral_price": 0.19671469337106276,
+      "collateral_price": 0.19043699499079417,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.8
@@ -1114,14 +1114,14 @@
     {
       "pool_id": "9d16d41db92537b72d3619607906f1f4c00cd18ca9ee68b23ef31b1281c39d92:2",
       "loan_asset": "USDA",
-      "loan_price": 5.099269630142981,
+      "loan_price": 5.268309507172676,
       "supplied": 7590.190349,
       "borrowed": 2600.0,
       "available": 4990.190349,
       "utilization": 0.3425,
-      "supply_apy": 0.09080961346250689,
+      "supply_apy": 0.08892574064678929,
       "borrow_apr": 0.0871,
-      "historical_apy": 0.08797392351324373,
+      "historical_apy": 0.0878942976451027,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1130,7 +1130,7 @@
           "assetName": "55534441",
           "decimals": 6
         },
-        "price": 5.099269630142981,
+        "price": 5.268309507172676,
         "maxBorrowLTV": 0.7,
         "recommendedBorrowLTV": 0.5249999999999999,
         "liquidationThresholdLTV": 0.8,
@@ -1139,20 +1139,20 @@
         "totalVolume": 0,
         "reserve": 23044109,
         "reserveFactor": 0.1,
-        "supplyApy": 0.09080961346250689,
-        "supplyApyAdjustment": 0.058712921706667504,
-        "historicalApy": 0.08797392351324373,
+        "supplyApy": 0.08892574064678929,
+        "supplyApyAdjustment": 0.05682904889094991,
+        "historicalApy": 0.0878942976451027,
         "borrowApr": 0.0871,
         "cToken": {
           "policyId": "d6004d9fb67d6beaa92f1fea8ad4e497eb0a5d85a37416137d2c383d",
           "assetName": "0014df106655534441"
         },
         "totalCToken": 7019998483,
-        "totalUnpaidInterest": 20406728,
+        "totalUnpaidInterest": 20602759,
         "u": 3425
       },
       "collateral_asset": "ADA",
-      "collateral_price": 0.19560546310247737,
+      "collateral_price": 0.189814208644827,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.8
@@ -1167,7 +1167,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.05,
-      "historical_apy": 0.0006054509008295295,
+      "historical_apy": 0.0006040128415778501,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1187,7 +1187,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.0006054509008295295,
+        "historicalApy": 0.0006040128415778501,
         "borrowApr": 0.05,
         "cToken": {
           "policyId": "17ebad2533854812bc341df616ff70de20fcc136191661c157cc87de",
@@ -1198,7 +1198,7 @@
         "u": 0
       },
       "collateral_asset": "USDCx",
-      "collateral_price": 5.083504352741464,
+      "collateral_price": 5.251080547917386,
       "max_ltv": 0.64,
       "recommended_ltv": 0.48,
       "liq_threshold": 0.8
@@ -1213,7 +1213,7 @@
       "utilization": 0.6817,
       "supply_apy": 0.06566818540853524,
       "borrow_apr": 0.0915,
-      "historical_apy": 0.06617127647990984,
+      "historical_apy": 0.06611445377786263,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1233,18 +1233,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.06566818540853524,
         "supplyApyAdjustment": 0.007956929532099656,
-        "historicalApy": 0.06617127647990984,
+        "historicalApy": 0.06611445377786263,
         "borrowApr": 0.0915,
         "cToken": {
           "policyId": "d80b2d063d700d071417747993fb6fbb4b96832327056520c88a32fa",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 814215249527,
-        "totalUnpaidInterest": 5683279360,
+        "totalUnpaidInterest": 5723713321,
         "u": 6817
       },
       "collateral_asset": "SURF",
-      "collateral_price": 0.5530028995982872,
+      "collateral_price": 0.5495967276313738,
       "max_ltv": 0.42,
       "recommended_ltv": 0.315,
       "liq_threshold": 0.5
@@ -1252,14 +1252,14 @@
     {
       "pool_id": "aa907ba817185699e8645356dcf0103554223b2d6c3109b4b9a805525d7796db:2",
       "loan_asset": "DJED",
-      "loan_price": 5.045873485692278,
+      "loan_price": 5.162512978908955,
       "supplied": 1013.742429,
       "borrowed": 0.0,
       "available": 1013.742429,
       "utilization": 0.0,
       "supply_apy": 0.0,
       "borrow_apr": 0.08,
-      "historical_apy": 0.03469321096670441,
+      "historical_apy": 0.034657797473235386,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1268,7 +1268,7 @@
           "assetName": "446a65644d6963726f555344",
           "decimals": 6
         },
-        "price": 5.045873485692278,
+        "price": 5.162512978908955,
         "maxBorrowLTV": 0.7,
         "recommendedBorrowLTV": 0.5249999999999999,
         "liquidationThresholdLTV": 0.8,
@@ -1279,7 +1279,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0,
         "supplyApyAdjustment": 0,
-        "historicalApy": 0.03469321096670441,
+        "historicalApy": 0.034657797473235386,
         "borrowApr": 0.08,
         "cToken": {
           "policyId": "2a7237af73312f8d235efec5d68afc53352caa7bed51bfe5d3e7da88",
@@ -1290,7 +1290,7 @@
         "u": 0
       },
       "collateral_asset": "ADA",
-      "collateral_price": 0.19818174253388027,
+      "collateral_price": 0.19370411349771363,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.8
@@ -1299,13 +1299,13 @@
       "pool_id": "b9fcde1ecacdde7b318b055abb5fbf465df5a9231b054552fd8b5967180718f0:2",
       "loan_asset": "ADA",
       "loan_price": 1,
-      "supplied": 112361.498761,
-      "borrowed": 67105.297809,
-      "available": 45256.200952,
-      "utilization": 0.5972,
-      "supply_apy": 0.05632077973404188,
-      "borrow_apr": 0.0781,
-      "historical_apy": 0.06483468956254868,
+      "supplied": 112377.959837,
+      "borrowed": 58791.62331,
+      "available": 53586.336527,
+      "utilization": 0.5231,
+      "supply_apy": 0.052901360910743725,
+      "borrow_apr": 0.0734,
+      "historical_apy": 0.06494205085791616,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1318,25 +1318,25 @@
         "maxBorrowLTV": 0.42,
         "recommendedBorrowLTV": 0.315,
         "liquidationThresholdLTV": 0.65,
-        "totalSupplied": 112361498761,
-        "totalBorrowed": 67105297809,
+        "totalSupplied": 112377959837,
+        "totalBorrowed": 58791623310,
         "totalVolume": 0,
-        "reserve": 1369628502,
+        "reserve": 1371457509,
         "reserveFactor": 0.1,
-        "supplyApy": 0.05632077973404188,
-        "supplyApyAdjustment": 0.01006933011997793,
-        "historicalApy": 0.06483468956254868,
-        "borrowApr": 0.0781,
+        "supplyApy": 0.052901360910743725,
+        "supplyApyAdjustment": 0.011921006709128055,
+        "historicalApy": 0.06494205085791616,
+        "borrowApr": 0.0734,
         "cToken": {
           "policyId": "1520fd13a76edab83a434c32b7b4246649425a7f6a9c62c0d01ff504",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 105846593053,
-        "totalUnpaidInterest": 2394806072,
-        "u": 5972
+        "totalUnpaidInterest": 2379956504,
+        "u": 5231
       },
       "collateral_asset": "IAG",
-      "collateral_price": 0.12462173609830923,
+      "collateral_price": 0.12444399158537243,
       "max_ltv": 0.42,
       "recommended_ltv": 0.315,
       "liq_threshold": 0.65
@@ -1351,7 +1351,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.05,
-      "historical_apy": 0.04280736800805296,
+      "historical_apy": 0.04276959850611117,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1371,7 +1371,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.04280736800805296,
+        "historicalApy": 0.04276959850611117,
         "borrowApr": 0.05,
         "cToken": {
           "policyId": "774df049cbc45bce6ca5d8a1ee61278a571c19b9abab960677718641",
@@ -1382,7 +1382,7 @@
         "u": 0
       },
       "collateral_asset": "iUSD",
-      "collateral_price": 5.126698037523424,
+      "collateral_price": 5.230782877612155,
       "max_ltv": 0.62,
       "recommended_ltv": 0.46499999999999997,
       "liq_threshold": 0.8
@@ -1397,7 +1397,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.04,
-      "historical_apy": 0.019951242692335835,
+      "historical_apy": 0.01993383222695888,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1417,7 +1417,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.019951242692335835,
+        "historicalApy": 0.01993383222695888,
         "borrowApr": 0.04,
         "cToken": {
           "policyId": "04a01ca13e8f3624dbab2bd63b595dccd6fc1070cd0570d096a0b4dc",
@@ -1428,7 +1428,7 @@
         "u": 0
       },
       "collateral_asset": "USDA",
-      "collateral_price": 5.099269630142981,
+      "collateral_price": 5.268309507172676,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.75
@@ -1443,7 +1443,7 @@
       "utilization": 0.5809,
       "supply_apy": 0.058038088659240164,
       "borrow_apr": 0.0771,
-      "historical_apy": 0.05792683184589231,
+      "historical_apy": 0.0578772077362133,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1463,18 +1463,18 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.058038088659240164,
         "supplyApyAdjustment": 0.010476755362888036,
-        "historicalApy": 0.05792683184589231,
+        "historicalApy": 0.0578772077362133,
         "borrowApr": 0.0771,
         "cToken": {
           "policyId": "80f28cd53198cc436df64e2f1344726633b78a6200bbc79fa998e19e",
           "assetName": "0014df1066414441"
         },
         "totalCToken": 1936359931637,
-        "totalUnpaidInterest": 41861427265,
+        "totalUnpaidInterest": 41940031524,
         "u": 5809
       },
       "collateral_asset": "SNEK",
-      "collateral_price": 0.0021348289996162943,
+      "collateral_price": 0.0021715916248350106,
       "max_ltv": 0.5,
       "recommended_ltv": 0.375,
       "liq_threshold": 0.66
@@ -1489,7 +1489,7 @@
       "utilization": 0.0,
       "supply_apy": 0.025,
       "borrow_apr": 0.04,
-      "historical_apy": 0.07944362310104558,
+      "historical_apy": 0.07937518364276741,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1509,7 +1509,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0.025,
         "supplyApyAdjustment": 0.025,
-        "historicalApy": 0.07944362310104558,
+        "historicalApy": 0.07937518364276741,
         "borrowApr": 0.04,
         "cToken": {
           "policyId": "8a0b647eef6f7dbafa9dfda4bc9c41dc2e746d93242d70165bb78469",
@@ -1520,7 +1520,7 @@
         "u": 0
       },
       "collateral_asset": "USDM",
-      "collateral_price": 5.130370415538028,
+      "collateral_price": 5.295645111734141,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.8
@@ -1528,14 +1528,14 @@
     {
       "pool_id": "e300c17430270883f3410c3e34d5ffd7109fb0db0476907963d9eeafb5cfd579:1",
       "loan_asset": "iUSD",
-      "loan_price": 5.126698037523424,
+      "loan_price": 5.230782877612155,
       "supplied": 517.515144,
       "borrowed": 0.0,
       "available": 517.515144,
       "utilization": 0.0,
       "supply_apy": 0.0,
       "borrow_apr": 0.1,
-      "historical_apy": 0.041691790015163877,
+      "historical_apy": 0.0416548582897418,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1544,7 +1544,7 @@
           "assetName": "69555344",
           "decimals": 6
         },
-        "price": 5.126698037523424,
+        "price": 5.230782877612155,
         "maxBorrowLTV": 0.67,
         "recommendedBorrowLTV": 0.5025000000000001,
         "liquidationThresholdLTV": 0.8,
@@ -1555,7 +1555,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0,
         "supplyApyAdjustment": 0,
-        "historicalApy": 0.041691790015163877,
+        "historicalApy": 0.0416548582897418,
         "borrowApr": 0.1,
         "cToken": {
           "policyId": "9de1a38b897e53f102ac35c863c6ca455cc16dae141527e35e066c8d",
@@ -1566,7 +1566,7 @@
         "u": 0
       },
       "collateral_asset": "ADA",
-      "collateral_price": 0.19640720476527693,
+      "collateral_price": 0.18981903720942017,
       "max_ltv": 0.67,
       "recommended_ltv": 0.5025000000000001,
       "liq_threshold": 0.8
@@ -1574,14 +1574,14 @@
     {
       "pool_id": "e316730dfef95437a043178cbe37c1eb73479f9f0bab7f9e8abafd22cd9a35b4:1",
       "loan_asset": "SNEK",
-      "loan_price": 0.0021348289996162943,
+      "loan_price": 0.0021715916248350106,
       "supplied": 4445173.0,
       "borrowed": 516964.0,
       "available": 3928209.0,
       "utilization": 0.1162,
-      "supply_apy": 0.0064357794466749895,
+      "supply_apy": 0.006346516802616797,
       "borrow_apr": 0.0125,
-      "historical_apy": 0.012102277269557593,
+      "historical_apy": 0.012091525552563764,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1590,7 +1590,7 @@
           "assetName": "534e454b",
           "decimals": 0
         },
-        "price": 0.0021348289996162943,
+        "price": 0.0021715916248350106,
         "maxBorrowLTV": 0.8,
         "recommendedBorrowLTV": 0.6000000000000001,
         "liquidationThresholdLTV": 0.85,
@@ -1599,20 +1599,20 @@
         "totalVolume": 0,
         "reserve": 128,
         "reserveFactor": 0.1,
-        "supplyApy": 0.0064357794466749895,
-        "supplyApyAdjustment": 0.0052728010879024515,
-        "historicalApy": 0.012102277269557593,
+        "supplyApy": 0.006346516802616797,
+        "supplyApyAdjustment": 0.005183538443844259,
+        "historicalApy": 0.012091525552563764,
         "borrowApr": 0.0125,
         "cToken": {
           "policyId": "25e47da135a36c0f8257f219ed237d402814d13c874dc2d82e33e7b0",
           "assetName": "0014df1066534e454b"
         },
         "totalCToken": 4396757,
-        "totalUnpaidInterest": 853,
+        "totalUnpaidInterest": 857,
         "u": 1162
       },
       "collateral_asset": "ADA",
-      "collateral_price": 465.42438731425733,
+      "collateral_price": 461.31377955593393,
       "max_ltv": 0.8,
       "recommended_ltv": 0.6000000000000001,
       "liq_threshold": 0.85
@@ -1620,14 +1620,14 @@
     {
       "pool_id": "e976132322ee75bd787936be7a9ef1fef917f3093a70ca8912cd5eb0769e9079:1",
       "loan_asset": "USDCx",
-      "loan_price": 5.083504352741464,
+      "loan_price": 5.251080547917386,
       "supplied": 505.728561,
       "borrowed": 0.0,
       "available": 505.728561,
       "utilization": 0.0,
       "supply_apy": 0.0,
       "borrow_apr": 0.075,
-      "historical_apy": 0.051069704069528266,
+      "historical_apy": 0.05088618310313442,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1636,7 +1636,7 @@
           "assetName": "5553444378",
           "decimals": 6
         },
-        "price": 5.083504352741464,
+        "price": 5.251080547917386,
         "maxBorrowLTV": 0.5,
         "recommendedBorrowLTV": 0.375,
         "liquidationThresholdLTV": 0.66,
@@ -1647,7 +1647,7 @@
         "reserveFactor": 0.1,
         "supplyApy": 0,
         "supplyApyAdjustment": 0,
-        "historicalApy": 0.051069704069528266,
+        "historicalApy": 0.05088618310313442,
         "borrowApr": 0.075,
         "cToken": {
           "policyId": "8f3bffdcef46b6e64df1162e5b65052b2c969cd826d10da81bf233ed",
@@ -1658,7 +1658,7 @@
         "u": 0
       },
       "collateral_asset": "SNEK",
-      "collateral_price": 0.0004094969538675875,
+      "collateral_price": 0.000422050315873325,
       "max_ltv": 0.5,
       "recommended_ltv": 0.375,
       "liq_threshold": 0.66
@@ -1666,14 +1666,14 @@
     {
       "pool_id": "f70b8c9f499366f8ac0be3cf0c274c4c8b35da8c2187dd9bdb40d19e7d4918e8:1",
       "loan_asset": "USDM",
-      "loan_price": 5.130370415538028,
+      "loan_price": 5.295645111734141,
       "supplied": 55571.823947,
       "borrowed": 28374.732738,
       "available": 27197.091209,
       "utilization": 0.5105,
-      "supply_apy": 0.11428244891501682,
+      "supply_apy": 0.11212478719444764,
       "borrow_apr": 0.0955,
-      "historical_apy": 0.1384102356168797,
+      "historical_apy": 0.13828729579659038,
       "total_volume": 0.0,
       "raw_pool": {
         "asset": {
@@ -1682,7 +1682,7 @@
           "assetName": "0014df105553444d",
           "decimals": 6
         },
-        "price": 5.130370415538028,
+        "price": 5.295645111734141,
         "maxBorrowLTV": 0.7,
         "recommendedBorrowLTV": 0.5249999999999999,
         "liquidationThresholdLTV": 0.8,
@@ -1691,20 +1691,20 @@
         "totalVolume": 0,
         "reserve": 314375343,
         "reserveFactor": 0.1,
-        "supplyApy": 0.11428244891501682,
-        "supplyApyAdjustment": 0.06913466493231306,
-        "historicalApy": 0.1384102356168797,
+        "supplyApy": 0.11212478719444764,
+        "supplyApyAdjustment": 0.06697700321174388,
+        "historicalApy": 0.13828729579659038,
         "borrowApr": 0.0955,
         "cToken": {
           "policyId": "a01a67a08547a21ba3b40aabe1833da1c97436dc0d3dd99e97d34c3a",
           "assetName": "0014df10660014df105553444d"
         },
         "totalCToken": 49036978135,
-        "totalUnpaidInterest": 485989166,
+        "totalUnpaidInterest": 488008015,
         "u": 5105
       },
       "collateral_asset": "ADA",
-      "collateral_price": 0.19536904148157025,
+      "collateral_price": 0.19198750474908077,
       "max_ltv": 0.7,
       "recommended_ltv": 0.5249999999999999,
       "liq_threshold": 0.8
