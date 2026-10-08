@@ -3,7 +3,7 @@
     "positions": "https://surflending.org/api/getAllPositions",
     "pools": "https://surflending.org/api/getAllPoolInfos"
   },
-  "fetched_at": "2026-10-07T22:24:45.965567+00:00",
+  "fetched_at": "2026-10-08T03:27:11.315394+00:00",
   "refresh_hours": 6,
   "position_count": 521,
   "ltv_check": {
@@ -13,7 +13,7 @@
     "out_of_range_gt2": 0,
     "agree_with_api": 521
   },
-  "ada_usd": 0.253992,
+  "ada_usd": 0.254637,
   "ada_usd_source": "coingecko",
   "pool_risk": {
     "1fa13574fa370e4d6eea7850d02f200a5f99c92daa1947a2d13380ea30150642:1": {
@@ -1613,33 +1613,6 @@
     },
     {
       "pool_id": "5c3317f1671aff88fd0782eaedf2694ae7e6dfa64b185d5051031718935beddd:89",
-      "address": "addr1q8dv2txzx2s0yt0q80axgx3cul69wyp7zqc97mvwj6hxgl9lv6dqfnm58jru5xl80eh66fcdytk6krfx8245tar675zsq8y9h0",
-      "loan_asset": "ADA",
-      "loan_price": 1,
-      "collateral_asset": "IAG",
-      "collateral_key": "5d16cc1a177b5d9ba9cfa9793b07e60f1fb70fea1f8aef064415d114.494147",
-      "debt_qty": 1615.929355,
-      "debt_value": 1615.929355,
-      "collateral_qty": 66409.524833,
-      "collateral_price": 0.09308418815549167,
-      "collateral_value": 6181.676704871769,
-      "interest_rate": 0.0626,
-      "start_time": 1781941307465,
-      "ltv": 0.2614063193771503,
-      "ltv_api": 0.26140631937715036,
-      "ltv_computed": 0.2614063193771503,
-      "liq_threshold": 0.65,
-      "health_factor": 2.4865504458681307,
-      "dist_to_liq": 0.5978364317274611,
-      "liq_price_drop": 0.5978364317274611,
-      "liq_price": 0.03743506925836493,
-      "out_ref": {
-        "txHash": "45c6ac0f57bd782d2e4f6db9670cfc5762f44af8da7288765944273e436b9004",
-        "outputIndex": 15
-      }
-    },
-    {
-      "pool_id": "5c3317f1671aff88fd0782eaedf2694ae7e6dfa64b185d5051031718935beddd:89",
       "address": "addr1q93sp7ntgweq3n9sh60udxv0t2kwuss78u0ad709flljd4dly8rvry45eqlqd7mtawwpv0jnxv9l4lf785nylz3t04jqv39cay",
       "loan_asset": "ADA",
       "loan_price": 1,
@@ -1851,6 +1824,33 @@
       "liq_price": 0.05129687037793824,
       "out_ref": {
         "txHash": "aa3f8f5f7a032b25ea7a07f210a5227a338700aa26e00407eef85cd4f519bd83",
+        "outputIndex": 0
+      }
+    },
+    {
+      "pool_id": "5c3317f1671aff88fd0782eaedf2694ae7e6dfa64b185d5051031718935beddd:89",
+      "address": "addr1q8dv2txzx2s0yt0q80axgx3cul69wyp7zqc97mvwj6hxgl9lv6dqfnm58jru5xl80eh66fcdytk6krfx8245tar675zsq8y9h0",
+      "loan_asset": "ADA",
+      "loan_price": 1,
+      "collateral_asset": "IAG",
+      "collateral_key": "5d16cc1a177b5d9ba9cfa9793b07e60f1fb70fea1f8aef064415d114.494147",
+      "debt_qty": 1615.929355,
+      "debt_value": 1615.929355,
+      "collateral_qty": 68296.524833,
+      "collateral_price": 0.09308418815549167,
+      "collateral_value": 6357.326567921182,
+      "interest_rate": 0.0626,
+      "start_time": 1781941307465,
+      "ltv": 0.2541837890087188,
+      "ltv_api": 0.2541837890087188,
+      "ltv_computed": 0.2541837890087188,
+      "liq_threshold": 0.65,
+      "health_factor": 2.557204779010137,
+      "dist_to_liq": 0.6089480169096634,
+      "liq_price_drop": 0.6089480169096634,
+      "liq_price": 0.036400756372559046,
+      "out_ref": {
+        "txHash": "2148f6a131531e7acca7498e9398d99b5616c0f2a3c3ee90d81cd43942cb3f6b",
         "outputIndex": 0
       }
     },
