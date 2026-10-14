@@ -3,17 +3,17 @@
     "positions": "https://surflending.org/api/getAllPositions",
     "pools": "https://surflending.org/api/getAllPoolInfos"
   },
-  "fetched_at": "2026-10-14T16:07:20.491724+00:00",
+  "fetched_at": "2026-10-14T21:04:36.972461+00:00",
   "refresh_hours": 6,
-  "position_count": 497,
+  "position_count": 498,
   "ltv_check": {
-    "total": 497,
-    "priced": 497,
+    "total": 498,
+    "priced": 498,
     "unpriced": 0,
     "out_of_range_gt2": 0,
-    "agree_with_api": 497
+    "agree_with_api": 498
   },
-  "ada_usd": 0.227101,
+  "ada_usd": 0.227932,
   "ada_usd_source": "coingecko",
   "pool_risk": {
     "1fa13574fa370e4d6eea7850d02f200a5f99c92daa1947a2d13380ea30150642:1": {
@@ -69,7 +69,7 @@
       "debt_near_liq_frac": 0.0
     },
     "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:4": {
-      "debt_ada": 1764523.85,
+      "debt_ada": 1765469.45,
       "debt_near_liq_frac": 0.0
     },
     "b1509737529330a2e862754835b6c8bd300a6271fa6b38dcae50bec611ebfe1f:2": {
@@ -77,11 +77,11 @@
       "debt_near_liq_frac": 0.0
     },
     "beff4f92597e96a6832a4139b3a7a0950ac4cce96469267780843255915164c4:2": {
-      "debt_ada": 328507.88,
-      "debt_near_liq_frac": 0.3084
+      "debt_ada": 323007.88,
+      "debt_near_liq_frac": 0.3137
     },
     "c025dfdf211152c5125b996bb4c19670c5633b55f34763ab04c83036da5755c3:79": {
-      "debt_ada": 37699.73,
+      "debt_ada": 38084.33,
       "debt_near_liq_frac": 0.0
     },
     "c23f2f7bb40092fc29ea1a08751b73ae736daec77f440acbc376978c4d75df35:3": {
@@ -126,7 +126,7 @@
       "ticker": "NIGHT",
       "price": 0.04471163284970445,
       "decimals": 6,
-      "debt_ada": 38548.45
+      "debt_ada": 38933.05
     },
     "eb7a93ebc321647673490810f618b548d7c24aa64d30ae342dba7076.0014df10415343454e44": {
       "ticker": "ASCEND",
@@ -192,7 +192,7 @@
       "ticker": "STRIKE",
       "price": 2.273198163282029,
       "decimals": 6,
-      "debt_ada": 1764523.85
+      "debt_ada": 1765469.45
     },
     "577f0b1342f8f8f4aed3388b80a8535812950c7a892495c0ecdf0f1e.0014df10464c4454": {
       "ticker": "FLDT",
@@ -204,7 +204,7 @@
       "ticker": "SURF",
       "price": 0.3656452743728101,
       "decimals": 6,
-      "debt_ada": 328507.88
+      "debt_ada": 323007.88
     },
     "49e423161ef818adc475c783571cb479d5f15ad52a01a240eacc0d3b.434f434b": {
       "ticker": "COCK",
@@ -9137,6 +9137,33 @@
       }
     },
     {
+      "pool_id": "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:4",
+      "address": "addr1q8wdxpejmgtmut3rhqrra652za89w37k25mhk2er76gpkk3lea2s7nt44d9apuzhkf2lp8asu6hzye8qa33hwdde9kkq047jvk",
+      "loan_asset": "ADA",
+      "loan_price": 1,
+      "collateral_asset": "STRIKE",
+      "collateral_key": "f13ac4d66b3ee19a6aa0f2a22298737bd907cc95121662fc971b5275.535452494b45",
+      "debt_qty": 945.6,
+      "debt_value": 945.6,
+      "collateral_qty": 1000.0,
+      "collateral_price": 2.273198163282029,
+      "collateral_value": 2273.198163282029,
+      "interest_rate": 0.0717,
+      "start_time": 1791911809377,
+      "ltv": 0.41597781278986645,
+      "ltv_api": 0.41597781278986634,
+      "ltv_computed": 0.41597781278986645,
+      "liq_threshold": 0.65,
+      "health_factor": 1.5625833398194995,
+      "dist_to_liq": 0.3600341341694363,
+      "liq_price_drop": 0.3600341341694363,
+      "liq_price": 1.4547692307692308,
+      "out_ref": {
+        "txHash": "2139feddd9b5ea22dd280016f081dd33c6b7a4ebb1c53f69a12f9ec27127ea51",
+        "outputIndex": 1
+      }
+    },
+    {
       "pool_id": "b1509737529330a2e862754835b6c8bd300a6271fa6b38dcae50bec611ebfe1f:2",
       "address": "addr1qxuhjuy90ry0vw2hz30n2uzgj76zu48zqlmktd89mqh02282mptejr7hxtjshgsat9rnezgjw3nxushhtz5z6yln0c3s37anj9",
       "loan_asset": "FLDT",
@@ -11811,33 +11838,6 @@
     },
     {
       "pool_id": "beff4f92597e96a6832a4139b3a7a0950ac4cce96469267780843255915164c4:2",
-      "address": "addr1q9fd8zl6p952pgw99740tmdezezsgkeduj4j8nmr3w772z9vq0a7jurmhy54qtz6hkeys9sz7xxmzxehu2lm9l89930qmyanlj",
-      "loan_asset": "ADA",
-      "loan_price": 1,
-      "collateral_asset": "SURF",
-      "collateral_key": "2d9db8a89f074aa045eab177f23a3395f62ced8b53499a9e4ad46c80.464c4f57",
-      "debt_qty": 5000.0,
-      "debt_value": 5000.0,
-      "collateral_qty": 40000.0,
-      "collateral_price": 0.3656452743728101,
-      "collateral_value": 14625.810974912403,
-      "interest_rate": 0.0804,
-      "start_time": 1791749751925,
-      "ltv": 0.34186138523029463,
-      "ltv_api": 0.34186138523029463,
-      "ltv_computed": 0.34186138523029463,
-      "liq_threshold": 0.5,
-      "health_factor": 1.4625810974912403,
-      "dist_to_liq": 0.31627722953941073,
-      "liq_price_drop": 0.31627722953941073,
-      "liq_price": 0.25,
-      "out_ref": {
-        "txHash": "86f2ecd944910204c29538bd31ac433da1cccdf4cfeb58aebc152ba2c431933e",
-        "outputIndex": 1
-      }
-    },
-    {
-      "pool_id": "beff4f92597e96a6832a4139b3a7a0950ac4cce96469267780843255915164c4:2",
       "address": "addr1qxn2jmv8exka748upp5l5kx5jn78fenu7lsp728h2zj5qeqv3d48c4f95vtf39nzewc7v26lkc8v590msxu95vukau4qa9gee5",
       "loan_asset": "ADA",
       "loan_price": 1,
@@ -11865,28 +11865,28 @@
     },
     {
       "pool_id": "beff4f92597e96a6832a4139b3a7a0950ac4cce96469267780843255915164c4:2",
-      "address": "addr1q9fd8zl6p952pgw99740tmdezezsgkeduj4j8nmr3w772z9vq0a7jurmhy54qtz6hkeys9sz7xxmzxehu2lm9l89930qmyanlj",
+      "address": "addr1q9u8mgk72kfqkgutp8sggzvjdm2nxax3kpfhvyzf3xxartfv9z0a748hpw6awzrgnnkcmn4hvstyy9gn5m0pga5vdwks4496hw",
       "loan_asset": "ADA",
       "loan_price": 1,
       "collateral_asset": "SURF",
       "collateral_key": "2d9db8a89f074aa045eab177f23a3395f62ced8b53499a9e4ad46c80.464c4f57",
-      "debt_qty": 2500.0,
-      "debt_value": 2500.0,
+      "debt_qty": 2000.0,
+      "debt_value": 2000.0,
       "collateral_qty": 20000.0,
       "collateral_price": 0.3656452743728101,
       "collateral_value": 7312.905487456202,
-      "interest_rate": 0.0807,
-      "start_time": 1791843532622,
-      "ltv": 0.34186138523029463,
-      "ltv_api": 0.34186138523029463,
-      "ltv_computed": 0.34186138523029463,
+      "interest_rate": 0.0803,
+      "start_time": 1791924769104,
+      "ltv": 0.2734891081842357,
+      "ltv_api": 0.2734891081842357,
+      "ltv_computed": 0.2734891081842357,
       "liq_threshold": 0.5,
-      "health_factor": 1.4625810974912403,
-      "dist_to_liq": 0.31627722953941073,
-      "liq_price_drop": 0.31627722953941073,
-      "liq_price": 0.25,
+      "health_factor": 1.8282263718640503,
+      "dist_to_liq": 0.45302178363152856,
+      "liq_price_drop": 0.45302178363152856,
+      "liq_price": 0.2,
       "out_ref": {
-        "txHash": "40e0d2bc7a425a1f4b1a1a647272c80a4464caf50de0b57c634e4bc0ab31eaca",
+        "txHash": "31ca5cadb826bdba843704d69f08c0d34aec9f73b66df6c9edb61315cc69204f",
         "outputIndex": 1
       }
     },
@@ -12130,6 +12130,33 @@
       "liq_price": 0.11079108948480494,
       "out_ref": {
         "txHash": "1deb4d64a2b7b5654bdb3353557e9ee5fd33a5f6a0de5c0a776eb398cf6ea075",
+        "outputIndex": 1
+      }
+    },
+    {
+      "pool_id": "c025dfdf211152c5125b996bb4c19670c5633b55f34763ab04c83036da5755c3:79",
+      "address": "addr1q97xn05x7qgag6e45mvpsa2mkdwcl4cgzwcs6477eg4xlrtl57ntcc07yqegwymxl4ll54fcjs3z6r8m9c3v9ahp43wsv2k5w2",
+      "loan_asset": "ADA",
+      "loan_price": 1,
+      "collateral_asset": "NIGHT",
+      "collateral_key": "0691b2fecca1ac4f53cb6dfb00b7013e561d1f34403b957cbb5af1fa.4e49474854",
+      "debt_qty": 384.6,
+      "debt_value": 384.6,
+      "collateral_qty": 3458.0,
+      "collateral_price": 0.18888026083261197,
+      "collateral_value": 653.1479419591722,
+      "interest_rate": 0.0792,
+      "start_time": 1791911269198,
+      "ltv": 0.588840560143786,
+      "ltv_api": 0.5888405601437859,
+      "ltv_computed": 0.588840560143786,
+      "liq_threshold": 0.81,
+      "health_factor": 1.3755845891495826,
+      "dist_to_liq": 0.2730363455014988,
+      "liq_price_drop": 0.2730363455014988,
+      "liq_price": 0.13730908467750572,
+      "out_ref": {
+        "txHash": "4f4f0e1f641f0bf7cc11764bab47e823f10b9d5b815a3d56ac384a6082ea5c9d",
         "outputIndex": 1
       }
     },
