@@ -3,7 +3,7 @@
     "positions": "https://surflending.org/api/getAllPositions",
     "pools": "https://surflending.org/api/getAllPoolInfos"
   },
-  "fetched_at": "2026-10-14T10:48:12.639847+00:00",
+  "fetched_at": "2026-10-14T16:07:20.491724+00:00",
   "refresh_hours": 6,
   "position_count": 497,
   "ltv_check": {
@@ -13,7 +13,7 @@
     "out_of_range_gt2": 0,
     "agree_with_api": 497
   },
-  "ada_usd": 0.234599,
+  "ada_usd": 0.227101,
   "ada_usd_source": "coingecko",
   "pool_risk": {
     "1fa13574fa370e4d6eea7850d02f200a5f99c92daa1947a2d13380ea30150642:1": {
@@ -69,7 +69,7 @@
       "debt_near_liq_frac": 0.0
     },
     "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:4": {
-      "debt_ada": 1763556.05,
+      "debt_ada": 1764523.85,
       "debt_near_liq_frac": 0.0
     },
     "b1509737529330a2e862754835b6c8bd300a6271fa6b38dcae50bec611ebfe1f:2": {
@@ -89,7 +89,7 @@
       "debt_near_liq_frac": 0.0
     },
     "c4bc8f270cd3a47aec42b6bac7a01b35d9c161d98f09d5176c26aef1465ca326:1": {
-      "debt_ada": 63805.21,
+      "debt_ada": 63261.61,
       "debt_near_liq_frac": 0.0
     },
     "e41624530dcc9ab0291233dcfc026b3a38ecfdaca302755ca58d9376e25f14f0:2": {
@@ -192,7 +192,7 @@
       "ticker": "STRIKE",
       "price": 2.273198163282029,
       "decimals": 6,
-      "debt_ada": 1763556.05
+      "debt_ada": 1764523.85
     },
     "577f0b1342f8f8f4aed3388b80a8535812950c7a892495c0ecdf0f1e.0014df10464c4454": {
       "ticker": "FLDT",
@@ -210,7 +210,7 @@
       "ticker": "COCK",
       "price": 0.0047771102229562275,
       "decimals": 0,
-      "debt_ada": 63805.21
+      "debt_ada": 63261.61
     },
     "e5a42a1a1d3d1da71b0449663c32798725888d2eb0843c4dabeca05a.576f726c644d6f62696c65546f6b656e58": {
       "ticker": "WMTX",
@@ -9110,6 +9110,33 @@
       }
     },
     {
+      "pool_id": "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:4",
+      "address": "addr1q8wdxpejmgtmut3rhqrra652za89w37k25mhk2er76gpkk3lea2s7nt44d9apuzhkf2lp8asu6hzye8qa33hwdde9kkq047jvk",
+      "loan_asset": "ADA",
+      "loan_price": 1,
+      "collateral_asset": "STRIKE",
+      "collateral_key": "f13ac4d66b3ee19a6aa0f2a22298737bd907cc95121662fc971b5275.535452494b45",
+      "debt_qty": 967.8,
+      "debt_value": 967.8,
+      "collateral_qty": 1000.0,
+      "collateral_price": 2.273198163282029,
+      "collateral_value": 2273.198163282029,
+      "interest_rate": 0.0717,
+      "start_time": 1791902929366,
+      "ltv": 0.4257437893591716,
+      "ltv_api": 0.4257437893591716,
+      "ltv_computed": 0.4257437893591716,
+      "liq_threshold": 0.65,
+      "health_factor": 1.5267398286147127,
+      "dist_to_liq": 0.34500955483204365,
+      "liq_price_drop": 0.34500955483204365,
+      "liq_price": 1.488923076923077,
+      "out_ref": {
+        "txHash": "24746780edd347b8bfc0ae91052f6122c01d822ea5fc8405cdb903c73f00aaca",
+        "outputIndex": 1
+      }
+    },
+    {
       "pool_id": "b1509737529330a2e862754835b6c8bd300a6271fa6b38dcae50bec611ebfe1f:2",
       "address": "addr1qxuhjuy90ry0vw2hz30n2uzgj76zu48zqlmktd89mqh02282mptejr7hxtjshgsat9rnezgjw3nxushhtz5z6yln0c3s37anj9",
       "loan_asset": "FLDT",
@@ -12914,33 +12941,6 @@
       "out_ref": {
         "txHash": "ffa4dc727efa9c474c698519ddf57166ca00a6d7a9066c220705ae0038476aa7",
         "outputIndex": 10
-      }
-    },
-    {
-      "pool_id": "c4bc8f270cd3a47aec42b6bac7a01b35d9c161d98f09d5176c26aef1465ca326:1",
-      "address": "addr1q8awhksl2npzgnpp2pn9jttxqhqkc3h8m7tgndwqnacpus4rscegwlv6vfj7up8g4qhczmqkuej90xzfrmkn4tnvjmpqt4yf3p",
-      "loan_asset": "ADA",
-      "loan_price": 1,
-      "collateral_asset": "COCK",
-      "collateral_key": "49e423161ef818adc475c783571cb479d5f15ad52a01a240eacc0d3b.434f434b",
-      "debt_qty": 543.6,
-      "debt_value": 543.6,
-      "collateral_qty": 1000000.0,
-      "collateral_price": 0.0047771102229562275,
-      "collateral_value": 4777.1102229562275,
-      "interest_rate": 0.0949,
-      "start_time": 1786404588319,
-      "ltv": 0.1137926433825517,
-      "ltv_api": 0.11379264338255168,
-      "ltv_computed": 0.1137926433825517,
-      "liq_threshold": 0.45,
-      "health_factor": 3.9545614428445592,
-      "dist_to_liq": 0.7471274591498851,
-      "liq_price_drop": 0.7471274591498851,
-      "liq_price": 0.001208,
-      "out_ref": {
-        "txHash": "ffa4dc727efa9c474c698519ddf57166ca00a6d7a9066c220705ae0038476aa7",
-        "outputIndex": 11
       }
     },
     {
