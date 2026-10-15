@@ -3,17 +3,17 @@
     "positions": "https://surflending.org/api/getAllPositions",
     "pools": "https://surflending.org/api/getAllPoolInfos"
   },
-  "fetched_at": "2026-10-15T02:15:10.393409+00:00",
+  "fetched_at": "2026-10-15T10:31:16.422127+00:00",
   "refresh_hours": 6,
-  "position_count": 502,
+  "position_count": 501,
   "ltv_check": {
-    "total": 502,
-    "priced": 502,
+    "total": 501,
+    "priced": 501,
     "unpriced": 0,
     "out_of_range_gt2": 0,
-    "agree_with_api": 502
+    "agree_with_api": 501
   },
-  "ada_usd": 0.226235,
+  "ada_usd": 0.220409,
   "ada_usd_source": "coingecko",
   "pool_risk": {
     "1fa13574fa370e4d6eea7850d02f200a5f99c92daa1947a2d13380ea30150642:1": {
@@ -69,7 +69,7 @@
       "debt_near_liq_frac": 0.0
     },
     "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:2": {
-      "debt_ada": 931466.75,
+      "debt_ada": 929699.45,
       "debt_near_liq_frac": 0.0
     },
     "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:4": {
@@ -154,7 +154,7 @@
       "ticker": "SNEK",
       "price": 0.0008385395647787856,
       "decimals": 0,
-      "debt_ada": 933621.0
+      "debt_ada": 931853.7
     },
     "5d16cc1a177b5d9ba9cfa9793b07e60f1fb70fea1f8aef064415d114.494147": {
       "ticker": "IAG",
@@ -5439,33 +5439,6 @@
       "out_ref": {
         "txHash": "7acbdf431a10c5c079c2eda3a4fe6f7e15708b18ef4ad672a987a19e117db51b",
         "outputIndex": 10
-      }
-    },
-    {
-      "pool_id": "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:2",
-      "address": "addr1q8wdxpejmgtmut3rhqrra652za89w37k25mhk2er76gpkk3lea2s7nt44d9apuzhkf2lp8asu6hzye8qa33hwdde9kkq047jvk",
-      "loan_asset": "ADA",
-      "loan_price": 1,
-      "collateral_asset": "SNEK",
-      "collateral_key": "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f.534e454b",
-      "debt_qty": 1767.3,
-      "debt_value": 1767.3,
-      "collateral_qty": 2500000.0,
-      "collateral_price": 0.0035283594595258206,
-      "collateral_value": 8820.898648814551,
-      "interest_rate": 0.0619,
-      "start_time": 1786078281168,
-      "ltv": 0.20035373609439544,
-      "ltv_api": 0.20035373609439547,
-      "ltv_computed": 0.20035373609439544,
-      "liq_threshold": 0.66,
-      "health_factor": 3.294173659377358,
-      "dist_to_liq": 0.6964337331903099,
-      "liq_price_drop": 0.6964337331903099,
-      "liq_price": 0.0010710909090909093,
-      "out_ref": {
-        "txHash": "7acbdf431a10c5c079c2eda3a4fe6f7e15708b18ef4ad672a987a19e117db51b",
-        "outputIndex": 12
       }
     },
     {
