@@ -3,17 +3,17 @@
     "positions": "https://surflending.org/api/getAllPositions",
     "pools": "https://surflending.org/api/getAllPoolInfos"
   },
-  "fetched_at": "2026-10-15T15:55:13.416030+00:00",
+  "fetched_at": "2026-10-15T20:39:54.688021+00:00",
   "refresh_hours": 6,
-  "position_count": 501,
+  "position_count": 503,
   "ltv_check": {
-    "total": 501,
-    "priced": 501,
+    "total": 503,
+    "priced": 503,
     "unpriced": 0,
     "out_of_range_gt2": 0,
-    "agree_with_api": 501
+    "agree_with_api": 503
   },
-  "ada_usd": 0.230114,
+  "ada_usd": 0.231129,
   "ada_usd_source": "coingecko",
   "pool_risk": {
     "1fa13574fa370e4d6eea7850d02f200a5f99c92daa1947a2d13380ea30150642:1": {
@@ -65,7 +65,7 @@
       "debt_near_liq_frac": 0.0
     },
     "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:2": {
-      "debt_ada": 940205.05,
+      "debt_ada": 942015.05,
       "debt_near_liq_frac": 0.0
     },
     "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:4": {
@@ -150,7 +150,7 @@
       "ticker": "SNEK",
       "price": 0.0008385395647787856,
       "decimals": 0,
-      "debt_ada": 942303.58
+      "debt_ada": 944113.58
     },
     "5d16cc1a177b5d9ba9cfa9793b07e60f1fb70fea1f8aef064415d114.494147": {
       "ticker": "IAG",
@@ -6325,6 +6325,60 @@
       "liq_price": 0.0008522727272727273,
       "out_ref": {
         "txHash": "39530476519286f6e073ebd184b0bd2042fea318152b73bfd2dbf7123df3e316",
+        "outputIndex": 1
+      }
+    },
+    {
+      "pool_id": "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:2",
+      "address": "addr1qyzqmqg48ew6ze589q2hv70c2wy6trc6jqeesdatvv0npd9j9yj3rswcdv00uxhnmpfe4ztdvh46yu8qvwvlsgfv0vmsdxz7a7",
+      "loan_asset": "ADA",
+      "loan_price": 1,
+      "collateral_asset": "SNEK",
+      "collateral_key": "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f.534e454b",
+      "debt_qty": 886.2,
+      "debt_value": 886.2,
+      "collateral_qty": 1000000.0,
+      "collateral_price": 0.0035283594595258206,
+      "collateral_value": 3528.3594595258205,
+      "interest_rate": 0.0682,
+      "start_time": 1791993289081,
+      "ltv": 0.2511648855978799,
+      "ltv_api": 0.25116488559787986,
+      "ltv_computed": 0.2511648855978799,
+      "liq_threshold": 0.66,
+      "health_factor": 2.627755860174951,
+      "dist_to_liq": 0.6194471430335153,
+      "liq_price_drop": 0.6194471430335153,
+      "liq_price": 0.0013427272727272728,
+      "out_ref": {
+        "txHash": "34ad38bcc1395ba999fac7872be3861793c01198d1bc319bfa234da77be05edb",
+        "outputIndex": 1
+      }
+    },
+    {
+      "pool_id": "a9eaa4a8b98c95bbb812f3bfc26db4da4b62db5555503e161545ab5113dab618:2",
+      "address": "addr1q9rfjsk049caaj9wgal49qhx9atnn5jay925zm2xc942mm7su5y05wag5gtgalm53gxjg4hgv3jayjc3msv57lu56psq80src6",
+      "loan_asset": "ADA",
+      "loan_price": 1,
+      "collateral_asset": "SNEK",
+      "collateral_key": "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f.534e454b",
+      "debt_qty": 923.8,
+      "debt_value": 923.8,
+      "collateral_qty": 1000000.0,
+      "collateral_price": 0.0035283594595258206,
+      "collateral_value": 3528.3594595258205,
+      "interest_rate": 0.0683,
+      "start_time": 1791994913086,
+      "ltv": 0.26182139620325146,
+      "ltv_api": 0.26182139620325146,
+      "ltv_computed": 0.26182139620325146,
+      "liq_threshold": 0.66,
+      "health_factor": 2.5208023850260246,
+      "dist_to_liq": 0.6033009148435584,
+      "liq_price_drop": 0.6033009148435584,
+      "liq_price": 0.0013996969696969698,
+      "out_ref": {
+        "txHash": "b9a2ffac6c71aab6993cdf53d4c5b1f7d48244f48f40051d43ee2a10133599ba",
         "outputIndex": 1
       }
     },
