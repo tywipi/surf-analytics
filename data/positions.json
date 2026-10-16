@@ -3,17 +3,17 @@
     "positions": "https://surflending.org/api/getAllPositions",
     "pools": "https://surflending.org/api/getAllPoolInfos"
   },
-  "fetched_at": "2026-10-16T02:06:55.173112+00:00",
+  "fetched_at": "2026-10-16T10:18:26.892857+00:00",
   "refresh_hours": 6,
-  "position_count": 505,
+  "position_count": 504,
   "ltv_check": {
-    "total": 505,
-    "priced": 505,
+    "total": 504,
+    "priced": 504,
     "unpriced": 0,
     "out_of_range_gt2": 0,
-    "agree_with_api": 505
+    "agree_with_api": 504
   },
-  "ada_usd": 0.229108,
+  "ada_usd": 0.230424,
   "ada_usd_source": "coingecko",
   "pool_risk": {
     "1fa13574fa370e4d6eea7850d02f200a5f99c92daa1947a2d13380ea30150642:1": {
@@ -77,8 +77,8 @@
       "debt_near_liq_frac": 0.0
     },
     "beff4f92597e96a6832a4139b3a7a0950ac4cce96469267780843255915164c4:2": {
-      "debt_ada": 331007.88,
-      "debt_near_liq_frac": 0.3061
+      "debt_ada": 329507.88,
+      "debt_near_liq_frac": 0.3075
     },
     "c025dfdf211152c5125b996bb4c19670c5633b55f34763ab04c83036da5755c3:79": {
       "debt_ada": 37699.73,
@@ -204,7 +204,7 @@
       "ticker": "SURF",
       "price": 0.3656452743728101,
       "decimals": 6,
-      "debt_ada": 331007.88
+      "debt_ada": 329507.88
     },
     "49e423161ef818adc475c783571cb479d5f15ad52a01a240eacc0d3b.434f434b": {
       "ticker": "COCK",
@@ -11941,33 +11941,6 @@
       "liq_price": 0.19999999999999998,
       "out_ref": {
         "txHash": "112a5fa61c490345194cfe711bc12efc935a764dbf159755c1cf5ca1156a5016",
-        "outputIndex": 1
-      }
-    },
-    {
-      "pool_id": "beff4f92597e96a6832a4139b3a7a0950ac4cce96469267780843255915164c4:2",
-      "address": "addr1q9px7869fzh58lm87ley9r3katk4p9cz7kdf9xdqhfajkhdgj9rwf8hjzya6xy4pyualdcp0r7anfs7fsmvdyjuqa37skjmtue",
-      "loan_asset": "ADA",
-      "loan_price": 1,
-      "collateral_asset": "SURF",
-      "collateral_key": "2d9db8a89f074aa045eab177f23a3395f62ced8b53499a9e4ad46c80.464c4f57",
-      "debt_qty": 1500.0,
-      "debt_value": 1500.0,
-      "collateral_qty": 18200.0,
-      "collateral_price": 0.3656452743728101,
-      "collateral_value": 6654.7439935851435,
-      "interest_rate": 0.0803,
-      "start_time": 1791728512387,
-      "ltv": 0.2254031111408536,
-      "ltv_api": 0.2254031111408536,
-      "ltv_computed": 0.2254031111408536,
-      "liq_threshold": 0.5,
-      "health_factor": 2.2182479978617144,
-      "dist_to_liq": 0.5491937777182928,
-      "liq_price_drop": 0.5491937777182928,
-      "liq_price": 0.16483516483516483,
-      "out_ref": {
-        "txHash": "4275ebed4d4ec95474d0d7c018805f2802f1ac518e745044b782617124960665",
         "outputIndex": 1
       }
     },
